@@ -1,14 +1,15 @@
 {
-	"name": "sagasphere",
-  	"version": "1.0.0",
-  	"description": "Toutes vos sagas MP3 préférées réunies dans une application.",
-  	"license": "UNLICENSED",
-	"scripts": {
-		"start": "node node_modules/react-native/local-cli/cli.js start"
-	},
-	"dependencies": {
-		"react": "16.0.0-alpha.6",
-		"react-native": "0.43.3"
-	},
-	"devDependencies": {}
+  "name": "sagasphere",
+  "version": "1.0.0",
+  "description": "Toutes vos sagas MP3 préférées réunies dans une application.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start"
+  },
+  "dependencies": {
+    "react": "16.0.0-alpha.6",
+    "react-native": "0.43.3",
+    "react-navigation": "^1.0.0-beta.7"
+  },
+  "devDependencies": {}
 }

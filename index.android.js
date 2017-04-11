@@ -6,6 +6,14 @@ import {
   View
 } from 'react-native';
 import routes from './src/routes';
+import { StackNavigator } from 'react-navigation';
+
+const AppNavigator = StackNavigator({
+  Home: { screen: routes.Home }
+}, {
+  headerMode: 'none',
+  initialRouteName: 'Home'
+});
 
 export default class SagaSphere extends Component {
   render() {
