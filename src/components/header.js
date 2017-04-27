@@ -1,16 +1,16 @@
 import React, {Component} from "react";
 import {Text} from "react-native";
 
-import Header from "./header";
+import {StyledHeader} from "./../styles/";
 
-export default class Home extends Component {
+export default class Header extends Component {
     constructor(props) {
         super(props);
     }
 
     render() {
         return (
-            <Header />
+            <StyledHeader>Hello World!</StyledHeader>
         );
     }
 }
