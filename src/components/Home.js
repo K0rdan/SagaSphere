@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import {Text,StyleSheet} from 'react-native';
+import React, {Component} from "react";
+import {Text, StyleSheet} from "react-native";
 
-class Home extends Component {
+export default class Home extends Component {
     constructor(props) {
         super(props);
     }
@@ -15,7 +15,7 @@ class Home extends Component {
 
 const styles = StyleSheet.create({
     title: {
-        fontWeight: 'bold',
-        color: '#000'
+        fontWeight: "bold",
+        color: "#000"
     }
 });
