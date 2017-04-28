@@ -1,16 +1,21 @@
 import React, {Component} from "react";
-import {Text} from "react-native";
+import {Text, View} from "react-native";
 
-import {StyledHeader} from "./../styles/";
+import {NavBar} from "./../styles/";
 
 export default class Header extends Component {
-    constructor(props) {
-        super(props);
+    toggleMenu() {
+        console.log("Toggle");
     }
 
     render() {
         return (
-            <StyledHeader>Hello World!</StyledHeader>
+            <NavBar.container>
+                <NavBar.burgerButton color="transparent" onPress={this.toggleMenu}>
+                    <NavBar.burgerImage source={NavBar.burgerImageSrc} style={{width: 30}}/>
+                </NavBar.burgerButton>
+                <NavBar.title>Hello World!</NavBar.title>
+            </NavBar.container>
         );
     }
 }
