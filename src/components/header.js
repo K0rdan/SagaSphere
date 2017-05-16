@@ -4,8 +4,16 @@ import {Text, View} from "react-native";
 import {NavBar} from "./../styles/";
 
 export default class Header extends Component {
+    constructor(props) {
+        super(props);
+
+        this.toggleMenu = this.toggleMenu.bind(this);
+    }
+
     toggleMenu() {
-        console.log("Toggle");
+        if(this.props.drawer){
+            this.props.drawer.toggleDrawer();
+        }
     }
 
     render() {
