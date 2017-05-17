@@ -6,7 +6,8 @@ import { StackNavigator } from "react-navigation";
 import routes from "./src/routes";
 
 const SagaSphere = StackNavigator({
-  Home: { screen: routes.Home }
+  Home: { screen: routes.Home },
+  UserSagas: { screen: routes.UserSagas }
 }, {
   headerMode: "none",
   initialRouteName: "Home"

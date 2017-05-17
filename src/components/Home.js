@@ -17,17 +17,17 @@ export default class Home extends Component {
     }
 
     renderNavigationView() {
-        return (<SideMenu drawer={this.refs.drawer} />);
+        return (<SideMenu navigation={this.props.navigation} drawer={this.refs.drawer} />);
     }
 
     render() {
-        const drawer = { toggleDrawer: () => this.toggleDrawer() };
+        const drawer = { toggleDrawer: () => this.toggleDrawer() };        
 
         return (
             <View style={{flex: 1}}>
                 <DrawerLayoutAndroid
                     ref='drawer'
-                    drawerWidth={100}
+                    drawerWidth={200}
                     drawerPosition={DrawerLayoutAndroid.positions.Left}
                     renderNavigationView={this.renderNavigationView}>
                     <Header drawer={drawer}/>
