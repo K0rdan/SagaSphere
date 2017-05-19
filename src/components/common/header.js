@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Text, View} from "react-native";
 
-import {NavBar} from "./../styles/";
+import {NavBar} from "./../../styles/";
 
 export default class Header extends Component {
     constructor(props) {
