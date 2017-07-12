@@ -9,5 +9,5 @@ export default SagaSphere = StackNavigator({
   UserSagas: { screen: routes.UserSagas, navigationOptions: { title: Lang[Config.Lang].Menu.User.Sagas } }
 }, {
   headerMode: "none",
-  initialRouteName: "UserSagas"
+  initialRouteName: "Home"
 });
