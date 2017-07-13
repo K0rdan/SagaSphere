@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {DrawerLayoutAndroid, Text, View} from "react-native";
+import {AppState, DrawerLayoutAndroid, Text, View} from "react-native";
 import Orientation from 'react-native-orientation';
 
 import Header from "./common/header";
@@ -10,9 +10,11 @@ export default class Page extends Component {
         super(props);
         
         this.state = {
+            appState: AppState.currentState,
             orientation: Orientation.getInitialOrientation()
         };
 
+        this.appStateDidChange = this.appStateDidChange.bind(this);
         this.orientationDidChange = this.orientationDidChange.bind(this);
         this.toggleDrawer = this.toggleDrawer.bind(this);
         this.renderPortrait = this.renderPortrait.bind(this);
@@ -21,11 +23,27 @@ export default class Page extends Component {
     }
 
     componentDidMount() {
+        AppState.addEventListener('change', this.appStateDidChange);
         Orientation.addOrientationListener(this.orientationDidChange);
     }
 
     componentWillUnmount() {
+        AppState.removeEventListener('change', this.appStateDidChange);
         Orientation.removeOrientationListener(this.orientationDidChange);
+    }
+
+
+    appStateDidChange = (appState) => {
+        if (this.state.appState === "active" && (appState === "inactive" || appState === "background")) {
+            // Force PORTRAIT mode when inactive / background
+            Orientation.lockToPortrait();
+            this.setState({ orientation: "PORTRAIT" });
+        }
+        else if (appState === "active" && (this.state.appState === "inactive" || this.state.appState === "background")) {
+            Orientation.unlockAllOrientations();
+        }
+
+        this.setState({ appState });
     }
 
     orientationDidChange = (orientation) => {
@@ -73,7 +91,7 @@ export default class Page extends Component {
 
     renderLandscape() {
         const renderContent = this.props.renderContent ? this.props.renderContent : null;
-        
+
         return (
             <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ width: 200 }}>
