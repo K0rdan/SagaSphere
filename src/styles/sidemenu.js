@@ -7,17 +7,17 @@ export const SideMenuStyles = {
     background-color: blue;
   `,
   menuRowContainer: styled.View`
-    margin: 10;
-    padding: 10;
+    margin: 10px;
+    padding: 10px;
     background-color: red;
   `,
   menuRowButton: styled.TouchableOpacity`
     width: 100%;
-    height: 25;
+    height: 25px;
   `,
   menuRowSeparator: styled.View`
     flex: 1;
-    height: 1;
+    height: 1px;
     background-color: #000;
   `
 };
