@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {Text, View, ListView} from "react-native";
+import React, { Component } from "react";
+import { Text, View, ListView } from "react-native";
 
 import Page from "./../page";
 
@@ -7,7 +7,12 @@ export default class Sagas extends Component {
     constructor(props) {
       super(props);
 
-      const sagasDataSource = new ListView.DataSource({ rowHasChanged: (a, b) => a != b });
+      const sagasDataSource = new ListView.DataSource({ 
+        rowHasChanged: (a, b) => a != b,
+        sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+      });
+
+      // TODO : Get data from WS
       this.sagas = [{
         title: "Donjon de Naheulbeuk",
         image: "http://static.sagasphere.com/sagas/images/ddn.png",
@@ -22,8 +27,21 @@ export default class Sagas extends Component {
           }
         ]
       }];
+
+      // Prepare data for the ListView
+      const sagasMaped = [];
+      this.sagas.forEach((saga) => {
+        if (saga.title && saga.title.length > 1) {
+          const firstChar = saga.title.substring(0,1);
+          if (!sagasMaped[firstChar]) {
+            sagasMaped[firstChar] = [];
+          }
+          sagasMaped[firstChar].push(saga);
+        }
+      });
+
       this.state = {
-        dataSource: sagasDataSource.cloneWithRows(this.sagas)
+        dataSource: sagasDataSource.cloneWithRowsAndSections(sagasMaped)
       };
     }
 
@@ -35,20 +53,20 @@ export default class Sagas extends Component {
       return (
         <ListView 
           dataSource={this.state.dataSource} 
-          renderRow={(rowData) => this.renderSagasRow(rowData)}
-          renderSectionHeader={(props) => this.renderSagasSectionHeader(props)} />
+          renderRow={this.renderSagasRow}
+          renderSectionHeader={this.renderSagasSectionHeader} />
       );
     }
 
     renderSagasRow(rowData) {
-        return (
-          <View><Text>{rowData.title}</Text></View>
-        );
+      return (
+        <View><Text>{rowData.title}</Text></View>
+      );
     }
 
-    renderSagasSectionHeader(props) {
-        return (
-          <View><Text>{props.character}</Text></View>
-        );
+    renderSagasSectionHeader(saga, category) {
+      return (
+        <View><Text>{category}</Text></View>
+      );
     }
 }
