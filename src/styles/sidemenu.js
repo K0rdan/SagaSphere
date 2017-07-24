@@ -21,3 +21,5 @@ export const SideMenuStyles = {
     background-color: #000;
   `
 };
+
+export default SideMenuStyles;

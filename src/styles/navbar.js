@@ -21,9 +21,11 @@ export const NavBar = {
     margin-left: auto;
     resize-mode: contain;
   `,
-  burgerImageSrc: burgerImageSrc,
+  burgerImageSrc,
   title: styled.Text`
     text-align: center;
     text-align-vertical: center;
   `
 };
+
+export default NavBar;

@@ -1,5 +1,4 @@
 // Lib imports
-import React from "react";
 import { AppRegistry } from "react-native";
 // Custom imports
 import SagaSphere from "./src/app";
