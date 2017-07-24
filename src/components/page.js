@@ -1,18 +1,14 @@
-import React, {Component} from "react";
-import {AppState, DrawerLayoutAndroid, Text, View} from "react-native";
-import Orientation from 'react-native-orientation';
+import React, { Component } from "react";
+import { AppState, DrawerLayoutAndroid, Text, View } from "react-native";
+import Orientation from "react-native-orientation";
 
 import Header from "./common/header";
 import SideMenu from "./common/sidemenu";
+import Loader from "./common/loader";
 
 export default class Page extends Component {
     constructor(props) {
         super(props);
-        
-        this.state = {
-            appState: AppState.currentState,
-            orientation: Orientation.getInitialOrientation()
-        };
 
         this.appStateDidChange = this.appStateDidChange.bind(this);
         this.orientationDidChange = this.orientationDidChange.bind(this);
@@ -20,34 +16,46 @@ export default class Page extends Component {
         this.renderPortrait = this.renderPortrait.bind(this);
         this.renderLandscape = this.renderLandscape.bind(this);
         this.renderNavigationView = this.renderNavigationView.bind(this);
+
+        this.state = { appState: AppState.currentState };
+    }
+
+    componentWillMount() {
+        Orientation.getOrientation((err, orientation) => {
+            if (err) {
+                // TODO : Create a generic error handler
+                console.log("ERR", err);
+            }
+            this.setState({ orientation });
+        });
     }
 
     componentDidMount() {
-        AppState.addEventListener('change', this.appStateDidChange);
+        AppState.addEventListener("change", this.appStateDidChange);
         Orientation.addOrientationListener(this.orientationDidChange);
     }
 
     componentWillUnmount() {
-        AppState.removeEventListener('change', this.appStateDidChange);
+        AppState.removeEventListener("change", this.appStateDidChange);
         Orientation.removeOrientationListener(this.orientationDidChange);
     }
 
-
-    appStateDidChange = (appState) => {
-        if (this.state.appState === "active" && (appState === "inactive" || appState === "background")) {
+    appStateDidChange(appState) {
+        // Active -> Inactive / Background
+        if (this.state && this.state.appState && this.state.appState === "active" && (appState === "inactive" || appState === "background")) {
             // Force PORTRAIT mode when inactive / background
             Orientation.lockToPortrait();
             this.setState({ orientation: "PORTRAIT" });
         }
-        else if (appState === "active" && (this.state.appState === "inactive" || this.state.appState === "background")) {
+        // Inactive / Background -> Active
+        else if (this.state && this.state.appState && appState && appState === "active" && (this.state.appState === "inactive" || this.state.appState === "background")) {
             Orientation.unlockAllOrientations();
         }
 
         this.setState({ appState });
     }
 
-    orientationDidChange = (orientation) => {
-        console.log("Orientation changed :", orientation);
+    orientationDidChange(orientation) {
         if (orientation === "PORTRAIT") {
             // Do something on rotation to PORTRAIT
             this.setState({ orientation });
@@ -58,32 +66,41 @@ export default class Page extends Component {
         }
     }
 
-    toggleDrawer = () => {
+    toggleDrawer() {
         this.refs.drawer.openDrawer();
     }
 
     render() {
-        if (this.state.orientation === "PORTRAIT") {
+        if (this.state && this.state.orientation && this.state.orientation === "PORTRAIT") {
             return this.renderPortrait();
         }
-        else if (this.state.orientation === "LANDSCAPE") {
+        else if (this.state && this.state.orientation && this.state.orientation === "LANDSCAPE") {
             return this.renderLandscape();
         }
+
+        return (<Loader />);
     }
 
     renderPortrait() {
-        const drawer = { toggleDrawer: () => this.toggleDrawer() };        
+        const drawer = { toggleDrawer: () => this.toggleDrawer() };
         const renderContent = this.props.renderContent ? this.props.renderContent : null;
 
+        const renderDefaultContent = () => (
+            <View style={{ flex: 1, alignItems: "center" }}>
+                <Text style={{ margin: 10, fontSize: 15, textAlign: "right" }}>Hello</Text>
+                <Text style={{ margin: 10, fontSize: 15, textAlign: "right" }}>World!</Text>
+            </View>
+        );
+
         return (
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
                 <DrawerLayoutAndroid
                     ref='drawer'
                     drawerWidth={200}
                     drawerPosition={DrawerLayoutAndroid.positions.Left}
                     renderNavigationView={this.renderNavigationView}>
                     <Header drawer={drawer}/>
-                    {renderContent != null ? renderContent() : this.renderDefaultContent()}
+                    {renderContent != null ? renderContent() : renderDefaultContent()}
                 </DrawerLayoutAndroid>
             </View>
         );
@@ -99,7 +116,7 @@ export default class Page extends Component {
                 </View>
                 <View style={{ flex: 1 }}>
                     <Header />
-                    {renderContent != null ? renderContent() : this.renderDefaultContent()}
+                    { renderContent != null ? renderContent() : this.renderDefaultContent() }
                 </View>
             </View>
         );
@@ -107,14 +124,5 @@ export default class Page extends Component {
 
     renderNavigationView() {
         return (<SideMenu navigation={this.props.navigation} drawer={this.refs.drawer} />);
-    }
-
-    renderDefaultContent() {
-      return (
-        <View style={{flex: 1, alignItems: 'center'}}>
-            <Text style={{margin: 10, fontSize: 15, textAlign: 'right'}}>Hello</Text>
-            <Text style={{margin: 10, fontSize: 15, textAlign: 'right'}}>World!</Text>
-        </View>
-      );
     }
 }

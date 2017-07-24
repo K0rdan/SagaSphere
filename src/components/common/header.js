@@ -1,7 +1,5 @@
-import React, {Component} from "react";
-import {Text, View} from "react-native";
-
-import {NavBar} from "./../../styles/";
+import React, { Component } from "react";
+import { NavBar } from "./../../styles/";
 
 export default class Header extends Component {
     constructor(props) {
@@ -11,7 +9,7 @@ export default class Header extends Component {
     }
 
     toggleMenu() {
-        if(this.props.drawer){
+        if (this.props.drawer) {
             this.props.drawer.toggleDrawer();
         }
     }
@@ -21,7 +19,7 @@ export default class Header extends Component {
             <NavBar.container>
                 { this.props.drawer ?
                     <NavBar.burgerButton color="transparent" onPress={this.toggleMenu}>
-                        <NavBar.burgerImage source={NavBar.burgerImageSrc} style={{width: 30}}/>
+                        <NavBar.burgerImage source={NavBar.burgerImageSrc} style={{ width: 30 }}/>
                     </NavBar.burgerButton> : null }
                 <NavBar.title>Hello World!</NavBar.title>
             </NavBar.container>
