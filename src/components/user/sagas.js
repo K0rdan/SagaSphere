@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { Text, View, ListView } from "react-native";
 
 import Page from "./../page";
@@ -7,13 +8,12 @@ export default class Sagas extends Component {
     constructor(props) {
       super(props);
 
-      const sagasDataSource = new ListView.DataSource({ 
-        rowHasChanged: (a, b) => a != b,
+      const sagasDataSource = new ListView.DataSource({
+        rowHasChanged: (a, b) => a !== b,
         sectionHeaderHasChanged: (s1, s2) => s1 !== s2
       });
 
-      // TODO : Get data from WS
-      this.sagas = [{
+      const sagas = [{
         title: "Donjon de Naheulbeuk",
         image: "http://static.sagasphere.com/sagas/images/ddn.png",
         author: "Pen Of Chaos",
@@ -30,9 +30,9 @@ export default class Sagas extends Component {
 
       // Prepare data for the ListView
       const sagasMaped = [];
-      this.sagas.forEach((saga) => {
+      sagas.forEach((saga) => {
         if (saga.title && saga.title.length > 1) {
-          const firstChar = saga.title.substring(0,1);
+          const firstChar = saga.title.substring(0, 1);
           if (!sagasMaped[firstChar]) {
             sagasMaped[firstChar] = [];
           }
@@ -41,6 +41,7 @@ export default class Sagas extends Component {
       });
 
       this.state = {
+        sagas,
         dataSource: sagasDataSource.cloneWithRowsAndSections(sagasMaped)
       };
     }
@@ -50,23 +51,23 @@ export default class Sagas extends Component {
     }
 
     renderContent() {
-      return (
-        <ListView 
-          dataSource={this.state.dataSource} 
-          renderRow={this.renderSagasRow}
-          renderSectionHeader={this.renderSagasSectionHeader} />
-      );
-    }
-
-    renderSagasRow(rowData) {
-      return (
+      const renderSagasRow = rowData => (
         <View><Text>{rowData.title}</Text></View>
       );
-    }
 
-    renderSagasSectionHeader(saga, category) {
-      return (
+      const renderSagasSectionHeader = (saga, category) => (
         <View><Text>{category}</Text></View>
+      );
+
+      return (
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={renderSagasRow}
+          renderSectionHeader={renderSagasSectionHeader} />
       );
     }
 }
+
+Sagas.PropTypes = {
+  navigation: PropTypes.object
+};
