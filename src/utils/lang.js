@@ -1,5 +1,10 @@
 export const Lang = {
   FR: {
+    Errors: {
+      Network: {
+        401: "Vous n'êtes pas connecté"
+      }
+    },
     Menu: {
       Home: "Accueil",
       User: {
@@ -8,6 +13,11 @@ export const Lang = {
     }
   },
   EN: {
+    Errors: {
+      Network: {
+        401: "You're not connected"
+      }
+    },
     Menu: {
       Home: "Home",
       User: {

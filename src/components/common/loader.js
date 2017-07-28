@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Text, View } from "react-native";
 
-export default class Header extends Component {
+export class Loader extends Component {
     render() {
         // TMP
         this.a = "";
@@ -13,3 +13,5 @@ export default class Header extends Component {
         );
     }
 }
+
+export default Loader;

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { NavBar } from "./../../styles/";
 
-export default class Header extends Component {
+export class Header extends Component {
     constructor(props) {
         super(props);
 
@@ -26,3 +26,5 @@ export default class Header extends Component {
         );
     }
 }
+
+export default Header;

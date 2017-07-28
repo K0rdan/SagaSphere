@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import { AppState, DrawerLayoutAndroid, Text, View } from "react-native";
 import Orientation from "react-native-orientation";
-
-import Header from "./common/header";
-import SideMenu from "./common/sidemenu";
-import Loader from "./common/loader";
+import { Config } from "./../utils/config";
+import { Header, Loader, Notification, NotificationLevel, SideMenu } from "./common/index";
 
 export default class Page extends Component {
     constructor(props) {
@@ -16,15 +14,27 @@ export default class Page extends Component {
         this.renderPortrait = this.renderPortrait.bind(this);
         this.renderLandscape = this.renderLandscape.bind(this);
         this.renderNavigationView = this.renderNavigationView.bind(this);
+        this.showNotification = this.showNotification.bind(this);
 
-        this.state = { appState: AppState.currentState };
+        this.state = {
+            appState: AppState.currentState,
+            notificationMessage: "",
+            notificationLevel: null
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { showNotification } = nextProps;
+        console.log(showNotification);
+        if (showNotification && showNotification.message && showNotification.level) {
+            this.showNotification(showNotification.message, showNotification.level);
+        }
     }
 
     componentWillMount() {
         Orientation.getOrientation((err, orientation) => {
             if (err) {
-                // TODO : Create a generic error handler
-                console.log("ERR", err);
+                this.showNotification(err, NotificationLevel.err);
             }
             this.setState({ orientation });
         });
@@ -70,6 +80,15 @@ export default class Page extends Component {
         this.refs.drawer.openDrawer();
     }
 
+    showNotification(notificationMessage, notificationLevel) {
+        if (notificationMessage && notificationMessage !== "" && notificationLevel) {
+            this.setState({ notificationMessage, notificationLevel });
+            setTimeout(() => {
+                this.setState({ notificationMessage: "", notificationLevel: null });
+            }, Config.NotificationDuration);
+        }
+    }
+
     render() {
         if (this.state && this.state.orientation && this.state.orientation === "PORTRAIT") {
             return this.renderPortrait();
@@ -78,19 +97,19 @@ export default class Page extends Component {
             return this.renderLandscape();
         }
 
-        return (<Loader />);
+        return (<View><Loader /></View>);
     }
 
     renderPortrait() {
+        const { renderContent } = this.props;
         const drawer = { toggleDrawer: () => this.toggleDrawer() };
-        const renderContent = this.props.renderContent ? this.props.renderContent : null;
-
         const renderDefaultContent = () => (
             <View style={{ flex: 1, alignItems: "center" }}>
                 <Text style={{ margin: 10, fontSize: 15, textAlign: "right" }}>Hello</Text>
                 <Text style={{ margin: 10, fontSize: 15, textAlign: "right" }}>World!</Text>
             </View>
         );
+        const content = renderContent ? renderContent() : renderDefaultContent();
 
         return (
             <View style={{ flex: 1 }}>
@@ -100,7 +119,8 @@ export default class Page extends Component {
                     drawerPosition={DrawerLayoutAndroid.positions.Left}
                     renderNavigationView={this.renderNavigationView}>
                     <Header drawer={drawer}/>
-                    {renderContent != null ? renderContent() : renderDefaultContent()}
+                    {content}
+                    {this.state.notificationMessage !== "" && this.state.notificationLevel !== null ? <Notification text={this.state.notificationMessage} level={this.state.notificationLevel}/> : null}
                 </DrawerLayoutAndroid>
             </View>
         );
@@ -112,11 +132,12 @@ export default class Page extends Component {
         return (
             <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ width: 200 }}>
-                    { this.renderNavigationView() }
+                    {this.renderNavigationView()}
                 </View>
                 <View style={{ flex: 1 }}>
                     <Header />
-                    { renderContent != null ? renderContent() : this.renderDefaultContent() }
+                    {renderContent != null ? renderContent() : this.renderDefaultContent()}
+                    {this.state.notificationLevel !== null ? <Notification text={this.state.notificationMessage} level={this.state.notificationLevel}/> : null}
                 </View>
             </View>
         );
