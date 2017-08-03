@@ -35,11 +35,13 @@ export default class Login extends Component {
       API(Config.EndPoints.login, loginHeaders)
         .then(async (jsonObj) => {
           try {
-            await AsyncStorage.setItem("user", JSON.stringify(jsonObj.user));
+            const { navigation } = this.props;
+            await AsyncStorage.setItem("user", JSON.stringify(jsonObj.data));
             this.setState({
               user: jsonObj,
               connecting: false
             });
+            navigation.navigate("Home");
           }
           catch (err) {
             throw err;

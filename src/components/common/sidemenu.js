@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { ListView, Text } from "react-native";
+import { AsyncStorage, ListView, Text, View } from "react-native";
 import PropTypes from "prop-types";
 import { Loader } from "./index";
-import { Config, Lang } from "./../../utils/";
+import { API, Config, Lang, NotificationLevel } from "./../../utils/";
 
 import { SideMenuStyles } from "./../../styles/";
 
@@ -18,6 +18,7 @@ export class SideMenu extends Component {
     this.state = {
       user: this.props.user || null,
       connecting: false,
+      disconnecting: false,
       dataSource: new ListView.DataSource({ rowHasChanged: (a, b) => a !== b }).cloneWithRows(this.menus)
     };
   }
@@ -39,6 +40,34 @@ export class SideMenu extends Component {
     }
   }
 
+   async menuLogoutOnPress() {
+    try {
+      this.setState({
+        user: null,
+        disconnecting: true
+      });
+
+      API(Config.EndPoints.logout)
+        .then(async () => {
+          await AsyncStorage.removeItem("user", (err) => {
+            const { navigation } = this.props;
+            if (err) {
+              throw err;
+            }
+
+            this.setState({ disconnecting: false });
+            navigation.navigate("Login");
+          });
+        })
+        .catch((err) => {
+          this.props.showNotification(err, NotificationLevel.err);
+        });
+    }
+    catch (err) {
+      this.props.showNotification(err, NotificationLevel.err);
+    }
+  }
+
   menuRowOnPress(data) {
     const { navigate, state } = this.props.navigation;
 
@@ -54,7 +83,7 @@ export class SideMenu extends Component {
   }
 
   render() {
-    if (this.state.connecting === true) {
+    if (this.state.connecting === true || this.state.disconnecting === true) {
       return <Loader />;
     }
 
@@ -76,10 +105,15 @@ export class SideMenu extends Component {
     }
 
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={rowData => this.renderMenuRow(rowData)}
-        renderSeparator={(sectionId, rowId) => this.renderMenuSeparator(sectionId, rowId)} />
+      <View>
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={rowData => this.renderMenuRow(rowData)}
+          renderSeparator={(sectionId, rowId) => this.renderMenuSeparator(sectionId, rowId)} />
+        <SideMenuStyles.menuLogout onPress={this.menuLogoutOnPress.bind(this)}>
+          <Text>Sign out</Text>
+        </SideMenuStyles.menuLogout>
+      </View>
     );
   }
 

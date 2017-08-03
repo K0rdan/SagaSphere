@@ -10,6 +10,10 @@ export const SideMenuStyles = {
     margin: 10px;
     background-color: white;
   `,
+  menuLogout: styled.TouchableOpacity`
+    margin: 10px;
+    background-color: white;
+  `,
   menuRowContainer: styled.View`
     margin: 10px;
     padding: 10px;

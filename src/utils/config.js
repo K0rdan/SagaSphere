@@ -15,6 +15,7 @@ export const Config = {
   EndPoints: {
     base,
     login: `${base}/login`,
+    logout: `${base}/logout`,
     saga: {
       list: `${base}/sagalist`
     }
