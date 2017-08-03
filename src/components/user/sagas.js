@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { Text, View, ListView } from "react-native";
 import PropTypes from "prop-types";
-import fetch from "isomorphic-fetch";
 import { Loader, NotificationLevel } from "./../common/";
-import { Config, Lang } from "./../../utils/";
+import { API, Config } from "./../../utils/";
 import Page from "./../page";
 
 export default class Sagas extends Component {
@@ -20,35 +19,7 @@ export default class Sagas extends Component {
     }
 
     fetchSagas() {
-      // TMP : Auto-Login
-      return fetch(Config.EndPoints.login, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify({
-          login: "test",
-          pass: "pass"
-        })
-      })
-      //
-      .then(() => {
-        fetch(Config.EndPoints.saga.list)
-        .then((res) => {
-          if (!res || !res.ok || res.status >= 400) {
-            const err = { message: res.statusText || Lang.FR.Errors.Network[res.status] };
-            throw err;
-          }
-          return res.json();
-        })
-        .then((resJson) => {
-          if (!resJson || !resJson.status || resJson.status === "ko") {
-            throw resJson;
-          }
-
-          return resJson;
-        })
+      return API(Config.EndPoints.saga.list)
         .then(this.formatSagas)
         .catch((err) => {
           this.setState({
@@ -58,7 +29,6 @@ export default class Sagas extends Component {
             }
           });
         });
-      });
     }
 
     formatSagas(sagasJson) {

@@ -6,6 +6,10 @@ export const SideMenuStyles = {
     height: 100%;
     background-color: blue;
   `,
+  menuLogin: styled.TouchableOpacity`
+    margin: 10px;
+    background-color: white;
+  `,
   menuRowContainer: styled.View`
     margin: 10px;
     padding: 10px;

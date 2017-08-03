@@ -1,12 +1,17 @@
 import React, { Component } from "react";
 import { AppState, DrawerLayoutAndroid, Text, View } from "react-native";
 import Orientation from "react-native-orientation";
-import { Config } from "./../utils/config";
+import PropTypes from "prop-types";
+import { Config } from "./../utils/index";
 import { Header, Loader, Notification, NotificationLevel, SideMenu } from "./common/index";
 
 export default class Page extends Component {
     constructor(props) {
         super(props);
+
+        const { currentPage } = this.props;
+
+        this.title = currentPage || null;
 
         this.appStateDidChange = this.appStateDidChange.bind(this);
         this.orientationDidChange = this.orientationDidChange.bind(this);
@@ -19,15 +24,20 @@ export default class Page extends Component {
         this.state = {
             appState: AppState.currentState,
             notificationMessage: "",
-            notificationLevel: null
+            notificationLevel: null,
+            user: null
         };
     }
 
     componentWillReceiveProps(nextProps) {
-        const { showNotification } = nextProps;
-        console.log(showNotification);
+        const { showNotification, user } = nextProps;
+
         if (showNotification && showNotification.message && showNotification.level) {
             this.showNotification(showNotification.message, showNotification.level);
+        }
+
+        if (user && user !== null) {
+            this.setState({ user });
         }
     }
 
@@ -144,6 +154,19 @@ export default class Page extends Component {
     }
 
     renderNavigationView() {
-        return (<SideMenu navigation={this.props.navigation} drawer={this.refs.drawer} />);
+        return (<SideMenu
+            navigation={this.props.navigation}
+            drawer={this.refs.drawer}
+            currentPageTitle={this.title}
+            showNotification={this.showNotification}
+            user={this.state.user}
+        />);
     }
 }
+
+Page.PropTypes = {
+    currentPage: PropTypes.string,
+    navigation: PropTypes.object,
+    renderContent: PropTypes.func,
+    user: PropTypes.object
+};

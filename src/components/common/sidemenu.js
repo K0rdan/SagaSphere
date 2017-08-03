@@ -1,5 +1,7 @@
 import React, { Component } from "react";
-import { Text, ListView } from "react-native";
+import { ListView, Text } from "react-native";
+import PropTypes from "prop-types";
+import { Loader } from "./index";
 import { Config, Lang } from "./../../utils/";
 
 import { SideMenuStyles } from "./../../styles/";
@@ -8,16 +10,33 @@ export class SideMenu extends Component {
   constructor(props) {
     super(props);
 
-    const menuDataSource = new ListView.DataSource({ rowHasChanged: (a, b) => a !== b });
-
     this.menus = [{
       title: Lang[Config.Lang].Menu.User.Sagas,
       routeName: "UserSagas"
     }];
 
     this.state = {
-      dataSource: menuDataSource.cloneWithRows(this.menus)
+      user: this.props.user || null,
+      connecting: false,
+      dataSource: new ListView.DataSource({ rowHasChanged: (a, b) => a !== b }).cloneWithRows(this.menus)
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { user } = nextProps;
+
+    if (user && user !== null) {
+      this.setState({ user });
+    }
+  }
+
+  menuLoginOnPress() {
+    const { navigation, currentPageTitle } = this.props;
+    const { navigate } = navigation;
+
+    if (currentPageTitle !== Lang[Config.Lang].Menu.User.Login) {
+      navigate("Login");
+    }
   }
 
   menuRowOnPress(data) {
@@ -35,6 +54,10 @@ export class SideMenu extends Component {
   }
 
   render() {
+    if (this.state.connecting === true) {
+      return <Loader />;
+    }
+
     return (
       <SideMenuStyles.container>
           <Text>I'm in the Drawer!</Text>
@@ -44,6 +67,14 @@ export class SideMenu extends Component {
   }
 
   renderMenu() {
+    if (this.state.user === null) {
+      return (
+        <SideMenuStyles.menuLogin onPress={this.menuLoginOnPress.bind(this)}>
+          <Text>Sign in to access to all fonctionalities</Text>
+        </SideMenuStyles.menuLogin>
+      );
+    }
+
     return (
       <ListView
         dataSource={this.state.dataSource}
@@ -70,3 +101,11 @@ export class SideMenu extends Component {
 }
 
 export default SideMenu;
+
+SideMenu.PropTypes = {
+  currentPageTitle: PropTypes.string,
+  drawer: PropTypes.element,
+  navigation: PropTypes.object,
+  showNotification: PropTypes.func,
+  user: PropTypes.object
+};
