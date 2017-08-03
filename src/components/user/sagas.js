@@ -11,11 +11,13 @@ export default class Sagas extends Component {
 
       this.formatSagas = this.formatSagas.bind(this);
 
-      this.fetchSagas();
-
       this.state = {
         showNotification: null
       };
+    }
+
+    componentWillMount() {
+      this.fetchSagas();
     }
 
     fetchSagas() {
