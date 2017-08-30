@@ -92,6 +92,9 @@ export default class Page extends Component {
 
     showNotification(notificationMessage, notificationLevel) {
         if (notificationMessage && notificationMessage !== "" && notificationLevel) {
+            if (this.refs.drawer) {
+                this.refs.drawer.closeDrawer();
+            }
             this.setState({ notificationMessage, notificationLevel });
             setTimeout(() => {
                 this.setState({ notificationMessage: "", notificationLevel: null });
