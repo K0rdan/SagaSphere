@@ -1,3 +1,9 @@
 node_modules/
 android/
 .vscode/
+.todo
+.buckconfig
+.flowconfig
+.watchmanconfig
+app.json
+jsconfig.json

@@ -2,7 +2,13 @@
 ```yarn install```
 
 ## Run
-```react-native run-android```
+If there is not android folder, regenerate the full react-native boiler plate, with the command :
+
+> ```react-native upgrade```
+
+To run the APK generation and deployment on the device run :
+
+> ```react-native run-android```
 
 ## Plugins
 List of plugins installed (or to install):
