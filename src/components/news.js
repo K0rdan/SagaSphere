@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, ListView } from "react-native";
+import { Text, View, FlatList } from "react-native";
 import PropTypes from "prop-types";
 import { Loader, NotificationLevel } from "./common/";
 import { API, Config } from "./../utils/";
@@ -35,18 +35,15 @@ export default class News extends Component {
     }
 
     formatNews(newsJson) {
-      const newsDataSource = new ListView.DataSource({
-        rowHasChanged: (a, b) => a !== b
-      });
       const newsMaped = [];
 
-      newsJson.data.forEach((article) => {
-        newsMaped.push(article);
+      newsJson.data.forEach((article, i) => {
+        newsMaped.push(Object.assign(article, { key: i }));
       });
 
       this.setState({
         news: newsJson.data,
-        dataSource: newsDataSource.cloneWithRows(newsMaped)
+        dataSource: newsMaped
       });
     }
 
@@ -61,14 +58,14 @@ export default class News extends Component {
 
     renderContent() {
       const renderSagasRow = rowData => (
-        <View><Text>{rowData.title}</Text></View>
+        <View><Text>{rowData.item.title}</Text></View>
       );
 
       if (this.state && this.state.dataSource) {
         return (
-          <ListView
-            dataSource={this.state.dataSource}
-            renderRow={renderSagasRow} />
+          <FlatList
+            data={this.state.dataSource}
+            renderItem={renderSagasRow} />
           );
       }
 
