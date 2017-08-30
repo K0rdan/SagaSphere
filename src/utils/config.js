@@ -16,6 +16,7 @@ export const Config = {
     base,
     login: `${base}/login`,
     logout: `${base}/logout`,
+    news: `${base}/news`,
     saga: {
       list: `${base}/sagalist`
     },

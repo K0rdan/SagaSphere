@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { AsyncStorage, ListView, Text, View } from "react-native";
 import PropTypes from "prop-types";
-import { Loader } from "./index";
-import { API, Config, Lang, NotificationLevel } from "./../../utils/";
+import { Loader, NotificationLevel } from "./index";
+import { API, Config, Lang } from "./../../utils/";
 
 import { SideMenuStyles } from "./../../styles/";
 
@@ -11,8 +11,14 @@ export class SideMenu extends Component {
     super(props);
 
     this.menus = [{
-      title: Lang[Config.Lang].Menu.User.Sagas,
-      routeName: "UserSagas"
+      title: Lang[Config.Lang].Menu.Sagas,
+      routeName: "Sagas"
+    }, {
+      title: Lang[Config.Lang].Menu.News,
+      routeName: "News"
+    }, {
+      title: Lang[Config.Lang].Menu.User.Feeds,
+      routeName: "Feeds"
     }];
 
     this.state = {
@@ -40,8 +46,9 @@ export class SideMenu extends Component {
     }
   }
 
-   async menuLogoutOnPress() {
+  async menuLogoutOnPress() {
     try {
+      const { navigation } = this.props;
       this.setState({
         user: null,
         disconnecting: true
@@ -49,22 +56,29 @@ export class SideMenu extends Component {
 
       API(Config.EndPoints.logout)
         .then(async () => {
-          await AsyncStorage.removeItem("user", (err) => {
-            const { navigation } = this.props;
-            if (err) {
-              throw err;
+          await AsyncStorage.removeItem("user", (asyncStorageErr) => {
+            if (asyncStorageErr) {
+              throw asyncStorageErr;
             }
-
             this.setState({ disconnecting: false });
             navigation.navigate("Login");
           });
         })
-        .catch((err) => {
-          this.props.showNotification(err, NotificationLevel.err);
+        .catch(async (err) => {
+          if (err && err.message === "You were not connected.") {
+            await AsyncStorage.removeItem("user", (asyncStorageErr) => {
+              if (asyncStorageErr) {
+                throw asyncStorageErr;
+              }
+              this.setState({ disconnecting: false });
+              navigation.navigate("Login");
+            });
+          }
+          this.props.showNotification(err.message || err || Lang[Config.Lang].Errors.Network.Default, NotificationLevel.err);
         });
     }
     catch (err) {
-      this.props.showNotification(err, NotificationLevel.err);
+      this.props.showNotification(err.message || err || Lang[Config.Lang].Errors.Network.Default, NotificationLevel.err);
     }
   }
 
@@ -76,7 +90,7 @@ export class SideMenu extends Component {
         // If we found the menu in our list and we're not actually on the page.
         // Then we can navigate to it.
         if (menu.title === data.title && menu.routeName !== state.routeName) {
-          navigate(menu.routeName);
+          navigate(menu.routeName, { user: this.state.user });
         }
       });
     }
@@ -134,8 +148,6 @@ export class SideMenu extends Component {
   }
 }
 
-export default SideMenu;
-
 SideMenu.PropTypes = {
   currentPageTitle: PropTypes.string,
   drawer: PropTypes.element,
@@ -143,3 +155,5 @@ SideMenu.PropTypes = {
   showNotification: PropTypes.func,
   user: PropTypes.object
 };
+
+export default SideMenu;

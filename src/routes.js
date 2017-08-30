@@ -1,9 +1,12 @@
 import Home from "./components/home";
-import Login from "./components/user/login";
-import UserSagas from "./components/user/sagas";
+import Sagas from "./components/sagas";
+import News from "./components/news";
+import { Feeds, Login } from "./components/user";
 
 export default {
     Home,
     Login,
-    UserSagas
+    News,
+    Sagas,
+    Feeds
 };
