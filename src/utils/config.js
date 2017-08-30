@@ -18,6 +18,9 @@ export const Config = {
     logout: `${base}/logout`,
     saga: {
       list: `${base}/sagalist`
+    },
+    user: {
+      feeds: `${base}/user/feeds`
     }
   }
 };
