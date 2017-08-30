@@ -5,7 +5,7 @@ import Page from "./../page";
 import { Loader, NotificationLevel } from "./../common/";
 import { API, Config, Lang } from "./../../utils/";
 
-export default class Login extends Component {
+export class Login extends Component {
   constructor(props) {
     super(props);
 
@@ -90,3 +90,5 @@ export default class Login extends Component {
 Login.PropTypes = {
   navigation: PropTypes.object
 };
+
+export default Login;
