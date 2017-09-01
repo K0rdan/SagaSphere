@@ -10,7 +10,7 @@ export const Lang = {
     },
     Menu: {
       Home: "Accueil",
-      Sagas: "Liste des sagas",
+      SagaList: "Liste des sagas",
       News: "Actualités",
       User: {
         Login: "Authentification",
@@ -29,7 +29,7 @@ export const Lang = {
     },
     Menu: {
       Home: "Home",
-      Sagas: "Sagas list",
+      SagaList: "Sagas list",
       News: "News",
       User: {
         Login: "Sign in",

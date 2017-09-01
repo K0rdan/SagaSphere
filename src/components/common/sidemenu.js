@@ -11,8 +11,8 @@ export class SideMenu extends Component {
     super(props);
 
     this.menus = [{
-      title: Lang[Config.Lang].Menu.Sagas,
-      routeName: "Sagas"
+      title: Lang[Config.Lang].Menu.SagaList,
+      routeName: "SagaList"
     }, {
       title: Lang[Config.Lang].Menu.News,
       routeName: "News"
