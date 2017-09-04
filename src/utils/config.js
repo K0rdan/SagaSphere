@@ -19,7 +19,7 @@ export const Config = {
     news: `${base}/news`,
     saga: {
       list: `${base}/sagalist`,
-      news: `${base}/news`
+      news: `${base}/saga/news`
     },
     user: {
       feeds: `${base}/user/feeds`
