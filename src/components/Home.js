@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { AsyncStorage, Text, View, FlatList, Animated } from "react-native";
+import { AsyncStorage, Text, View, AppState } from "react-native";
+import Orientation from "react-native-orientation";
+import Carousel from "react-native-snap-carousel";
 import Page from "./page";
 import { API, Config } from "./../utils/";
 import { Loader, NotificationLevel, Error } from "./common/";
 
 const styles = {
   listItem: {
-    width: 350,
     height: 200,
     backgroundColor: "rgba(0,0,0,0.25)"
   }
@@ -18,10 +19,13 @@ export default class Home extends Component {
     super(props);
 
     this.formatNews = this.formatNews.bind(this);
+    this.appStateDidChange = this.appStateDidChange.bind(this);
+    this.orientationDidChange = this.orientationDidChange.bind(this);
 
     this.state = {
       user: null,
       news: null,
+      orientation: null,
       showNotification: null,
       error: null
     };
@@ -30,6 +34,54 @@ export default class Home extends Component {
   componentWillMount() {
     this.retrieveUser();
     this.fetchNews();
+
+    Orientation.getOrientation((err, orientation) => {
+      if (err) {
+        this.setState({
+          showNotification: {
+            message: err,
+            level: NotificationLevel.err
+          }
+        });
+      }
+      this.setState({ orientation });
+    });
+  }
+
+  componentDidMount() {
+    AppState.addEventListener("change", this.appStateDidChange);
+    Orientation.addOrientationListener(this.orientationDidChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener("change", this.appStateDidChange);
+    Orientation.removeOrientationListener(this.orientationDidChange);
+  }
+
+  orientationDidChange(orientation) {
+    if (orientation === "PORTRAIT") {
+      // Do something on rotation to PORTRAIT
+      this.setState({ orientation });
+    }
+    else if (orientation === "LANDSCAPE") {
+      // Do something on rotation to LANDSCAPE
+      this.setState({ orientation });
+    }
+  }
+
+  appStateDidChange(appState) {
+    // Active -> Inactive / Background
+    if (this.state && this.state.appState && this.state.appState === "active" && (appState === "inactive" || appState === "background")) {
+      // Force PORTRAIT mode when inactive / background
+      Orientation.lockToPortrait();
+      this.setState({ orientation: "PORTRAIT" });
+    }
+    // Inactive / Background -> Active
+    else if (this.state && this.state.appState && appState && appState === "active" && (this.state.appState === "inactive" || this.state.appState === "background")) {
+      Orientation.unlockAllOrientations();
+    }
+
+    this.setState({ appState });
   }
 
   async retrieveUser() {
@@ -85,8 +137,11 @@ export default class Home extends Component {
   }
 
   renderContent() {
+    const sliderWidth = this.state.orientation === "PORTRAIT" ? 360 : 440;
+    const itemWidth = this.state.orientation === "PORTRAIT" ? 300 : 360;
+
     const renderListItem = rowData => (
-      <View style={styles.listItem}>
+      <View style={Object.assign({ width: itemWidth }, styles.listItem)}>
         <Text>{rowData.item.content}</Text>
       </View>
     );
@@ -103,14 +158,12 @@ export default class Home extends Component {
         <View>
           <Text>Messages des créateurs</Text>
           { this.state.news ?
-            <FlatList
-              horizontal={true}
+            <Carousel
               data={this.state.news}
-              onScroll={Animated.event(
-                [{ nativeEvent: { contentOffset: { x: new Animated.Value(0) } } }],
-                { useNativeDriver: true }
-              )}
-              renderItem={renderListItem} /> :
+              renderItem={renderListItem}
+              sliderWidth={sliderWidth}
+              itemWidth={itemWidth}
+            /> :
             <Loader />
           }
         </View>
