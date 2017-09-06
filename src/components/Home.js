@@ -9,7 +9,16 @@ import { Loader, NotificationLevel, Error } from "./common/";
 
 const styles = {
   listItem: {
-    height: 200,
+    height: 150
+  },
+  listItemContainer: {
+    height: "90%",
+    margin: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "black",
+    borderRadius: 5,
     backgroundColor: "rgba(0,0,0,0.25)"
   }
 };
@@ -139,10 +148,13 @@ export default class Home extends Component {
   renderContent() {
     const sliderWidth = this.state.orientation === "PORTRAIT" ? 360 : 440;
     const itemWidth = this.state.orientation === "PORTRAIT" ? 300 : 360;
+    const itemHeight = styles.listItem.height;
 
     const renderListItem = rowData => (
       <View style={Object.assign({ width: itemWidth }, styles.listItem)}>
-        <Text>{rowData.item.content}</Text>
+        <View style={styles.listItemContainer}>
+          <Text>{rowData.item.content}</Text>
+        </View>
       </View>
     );
 
@@ -163,6 +175,11 @@ export default class Home extends Component {
               renderItem={renderListItem}
               sliderWidth={sliderWidth}
               itemWidth={itemWidth}
+              itemHeight={itemHeight}
+              animationOptions={{ duration: 300 }}
+              activeSlideAlignment={"start"}
+              inactiveSlideScale={1}
+              inactiveSlideOpacity={0.25}
             /> :
             <Loader />
           }
