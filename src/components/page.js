@@ -114,7 +114,7 @@ export default class Page extends Component {
     }
 
     renderPortrait() {
-        const { renderContent } = this.props;
+        const { currentPage, renderContent } = this.props;
         const drawer = { toggleDrawer: () => this.toggleDrawer() };
         const renderDefaultContent = () => (
             <View style={{ flex: 1, alignItems: "center" }}>
@@ -131,7 +131,10 @@ export default class Page extends Component {
                     drawerWidth={200}
                     drawerPosition={DrawerLayoutAndroid.positions.Left}
                     renderNavigationView={this.renderNavigationView}>
-                    <Header drawer={drawer}/>
+                    <Header
+                        currentPage={currentPage}
+                        drawer={drawer}
+                    />
                     {content}
                     {this.state.notificationMessage !== "" && this.state.notificationLevel !== null ? <Notification text={this.state.notificationMessage} level={this.state.notificationLevel}/> : null}
                 </DrawerLayoutAndroid>
