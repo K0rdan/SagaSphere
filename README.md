@@ -1,3 +1,10 @@
+# TODO :
+Resolve Yarn install alerts :
+```
+warning "ajv-keywords@1.5.1" has incorrect peer dependency "ajv@>=4.10.0".
+warning "eslint-config-airbnb@15.1.0" has incorrect peer dependency "eslint-plugin-jsx-a11y@^5.1.1".
+```
+
 ## Installation
 ```yarn install```
 
