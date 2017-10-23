@@ -10,7 +10,10 @@ export function API(url, options = {}) {
       // Network handler
       .then((res) => {
         if (!res || !res.ok || res.status >= 400) {
-          const err = { message: Lang[Config.Lang].Errors.Network.Default };
+          const err = {
+            status: res.status,
+            message: Lang[Config.Lang].Errors.Network.Default
+          };
           const statusErr = Lang[Config.Lang].Errors.Network[res.status];
 
           if (res.statusText) {

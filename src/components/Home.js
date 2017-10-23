@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { AsyncStorage, Text, View, AppState, TouchableOpacity } from "react-native";
+import { map } from "lodash";
 import Orientation from "react-native-orientation";
 import Carousel from "react-native-snap-carousel";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -58,12 +59,14 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
 
-    this.formatNews = this.formatNews.bind(this);
+    this.formatData = this.formatData.bind(this);
     this.appStateDidChange = this.appStateDidChange.bind(this);
     this.orientationDidChange = this.orientationDidChange.bind(this);
 
+    this.carousels = [];
     this.carouselOptions = {
       activeSlideAlignment: "start",
+      apparitionDelay: 0,
       inactiveSlideOpacity: 0.25,
       inactiveSlideScale: 1,
       animationOptions: {
@@ -73,6 +76,16 @@ export default class Home extends Component {
 
     this.state = {
       user: null,
+      latestSagas: null,
+      latestSagasArrows: {
+        left: false,
+        right: false
+      },
+      latestEpisodes: null,
+      latestEpisodesArrows: {
+        left: false,
+        right: false
+      },
       news: null,
       newsArrows: {
         left: false,
@@ -86,7 +99,7 @@ export default class Home extends Component {
 
   componentWillMount() {
     this.retrieveUser();
-    this.fetchNews();
+    this.fetchData();
 
     Orientation.getOrientation((err, orientation) => {
       if (err) {
@@ -120,6 +133,10 @@ export default class Home extends Component {
       // Do something on rotation to LANDSCAPE
       this.setState({ orientation });
     }
+
+    this.updateCarouselArrows("latestSagas");
+    this.updateCarouselArrows("latestEpisodes");
+    this.updateCarouselArrows("news");
   }
 
   appStateDidChange(appState) {
@@ -155,32 +172,52 @@ export default class Home extends Component {
     }
   }
 
-  fetchNews() {
-    return API(Config.EndPoints.news)
-      .then(this.formatNews)
+  fetchData() {
+    return Promise.all([
+      API(Config.EndPoints.saga.latest)
+        .then(jsonRes => ({ dataType: "latestSagas", data: jsonRes.data })),
+      API(Config.EndPoints.episodes.latest)
+        .then(jsonRes => ({ dataType: "latestEpisodes", data: jsonRes.data })),
+      API(Config.EndPoints.news)
+        .then(jsonRes => ({ dataType: "news", data: jsonRes.data }))
+    ])
+      .then(this.formatData)
       .catch((error) => {
         this.setState({
           showNotification: {
-            message: error.message,
+            message: `One of the end point did not respond properly : '${error.message}'.`,
             level: NotificationLevel.err
           },
           error
         });
       });
   }
-  formatNews(jsonRes) {
-    const news = [];
 
-    jsonRes.data.forEach((article, i) => {
-      news.push(Object.assign(article, { key: i }));
+  formatData(fetchesRes) {
+    const state = {
+      latestSagas: [],
+      latestEpisodes: [],
+      news: []
+    };
+
+    map(fetchesRes, (fetchRes) => {
+      const { dataType } = fetchRes;
+      fetchRes.data.forEach((news, i) => {
+        state[dataType].push(Object.assign(news, { key: i }));
+      });
     });
 
-    this.setState({
-      news,
+    this.setState(Object.assign({}, state, {
+      latestSagasArrows: {
+        right: state.latestSagas.length > 1
+      },
+      latestEpisodesArrows: {
+        right: state.latestEpisodes.length > 1
+      },
       newsArrows: {
-        right: news.length > 1
+        right: state.news.length > 1
       }
-    });
+    }));
   }
 
   render() {
@@ -199,15 +236,17 @@ export default class Home extends Component {
       <View>
         <View>
           <Text>TODO : Les dernières sagas</Text>
+          { this.state.latestSagas ? this.renderCarousel("latestSagas", this.state.latestSagas) : <Loader /> }
         </View>
         <View style={styles.horizontalSeparator} />
         <View>
           <Text>TODO : Les derniers épisodes</Text>
+          { this.state.latestEpisodes ? this.renderCarousel("latestEpisodes", this.state.latestEpisodes) : <Loader /> }
         </View>
         <View style={styles.horizontalSeparator} />
         <View>
           <Text>Messages des créateurs</Text>
-          { this.state.news ? this.renderCarousel(this.state.news) : <Loader /> }
+          { this.state.news ? this.renderCarousel("news", this.state.news) : <Loader /> }
         </View>
       </View>
     );
@@ -217,7 +256,7 @@ export default class Home extends Component {
     return (<Error details={this.state.error} />);
   }
 
-  renderCarousel(data) {
+  renderCarousel(type, data) {
     const sliderWidth = this.state.orientation === "PORTRAIT" ? 360 : 440;
     const itemWidth = this.state.orientation === "PORTRAIT" ? 300 : 360;
     const itemHeight = styles.listItem.height;
@@ -237,22 +276,26 @@ export default class Home extends Component {
         delete containerStyle.left;
       }
 
-      return (
-        <TouchableOpacity style={containerStyle} onPress={this.onNewsArrowPush.bind(this, direction)}>
-          <Icon
-            name={`chevron-${direction}`}
-            size={24}
-          />
-        </TouchableOpacity>
-      );
+      if (this.state[`${type}Arrows`][direction]) {
+        return (
+          <TouchableOpacity style={containerStyle} onPress={this.onArrowPush.bind(this, type, direction)}>
+            <Icon
+              name={`chevron-${direction}`}
+              size={24}
+            />
+          </TouchableOpacity>
+        );
+      }
+
+      return null;
     };
-    console.log(this.state.newsArrows);
+
     return (
       <View>
-        { this.state.newsArrows.left ? renderListItemArrow("left") : null }
+        { renderListItemArrow("left") }
         <Carousel
           ref={(c) => {
-            this.carousel = c;
+            this.carousels[type] = c;
           }}
           data={data}
           renderItem={renderListItem}
@@ -261,31 +304,31 @@ export default class Home extends Component {
           itemHeight={itemHeight}
           // All common carousel options
           {...this.carouselOptions}
-          // TMP : Need a setTimeout around 'onSnapToItem' ?
-          onSnapToItem={this.onSnapToItem.bind(this)}
+          // Event handlers
+          onSnapToItem={this.updateCarouselArrows.bind(this, type)}
         />
-        { this.state.newsArrows.right ? renderListItemArrow("right") : null }
+        { renderListItemArrow("right") }
       </View>
     );
   }
 
-  onSnapToItem() {
-    if (this.state.news.length > 1) {
-      const { currentIndex } = this.carousel;
-      console.log(currentIndex);
+  updateCarouselArrows(carousel) {
+    if (this.state[carousel].length > 1) {
+      const { currentIndex } = this.carousels[carousel];
+
       if (currentIndex === 0) {
         // First item case -> Show right arrow
         this.setState({
-          newsArrows: {
+          [`${carousel}Arrows`]: {
             left: false,
             right: true
           }
         });
       }
-      else if (currentIndex >= 0 && currentIndex < (this.state.news.length - 1)) {
+      else if (currentIndex >= 0 && currentIndex < (this.state[carousel].length - 1)) {
         // Middle item case -> Show left and right arrow
         this.setState({
-          newsArrows: {
+          [`${carousel}Arrows`]: {
             left: true,
             right: true
           }
@@ -294,7 +337,7 @@ export default class Home extends Component {
       else {
         // Last item case -> Show left arrow
         this.setState({
-          newsArrows: {
+          [`${carousel}Arrows`]: {
             left: true,
             right: false
           }
@@ -303,12 +346,12 @@ export default class Home extends Component {
     }
   }
 
-  onNewsArrowPush(direction) {
+  onArrowPush(carousel, direction) {
     if (direction === "right") {
-      this.carousel.snapToNext();
+      this.carousels[carousel].snapToNext();
     }
     else if (direction === "left") {
-      this.carousel.snapToPrev();
+      this.carousels[carousel].snapToPrev();
     }
   }
 }

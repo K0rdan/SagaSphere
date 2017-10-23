@@ -18,8 +18,12 @@ export const Config = {
     logout: `${base}/logout`,
     news: `${base}/news`,
     saga: {
+      latest: `${base}/episodes/latest`,
       list: `${base}/sagalist`,
       news: `${base}/saga/news`
+    },
+    episodes: {
+      latest: `${base}/episodes/latest`
     },
     user: {
       feeds: `${base}/user/feeds`
