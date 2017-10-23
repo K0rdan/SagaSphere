@@ -22,6 +22,7 @@ List of plugins installed (or to install):
 * [react-native-device-info](https://github.com/rebeccahughes/react-native-device-info)
 * [react-native-orientation](https://github.com/yamill/react-native-orientation)
 * [react-native-snap-carousel](https://github.com/archriss/react-native-snap-carousel/)
+* [react-native-vector-icons](https://github.com/oblador/react-native-vector-icons)
 
 ## Specifications
 ### Saga specifications

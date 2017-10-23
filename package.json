@@ -6,7 +6,9 @@
   "scripts": {
     "lint:staged": "lint-staged",
     "lint:eslint": "eslint",
-    "start": "node node_modules/react-native/local-cli/cli.js start"
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "srdm": "yarn show-react-dev-menu",
+    "show-react-dev-menu": "adb shell input keyevent KEYCODE_MENU"
   },
   "lint-staged": {
     "*.js": "lint:eslint"
