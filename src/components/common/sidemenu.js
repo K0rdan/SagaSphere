@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { AsyncStorage, ListView, Text, View } from "react-native";
+import { AsyncStorage, ListView, Text, TouchableOpacity, View } from "react-native";
 import PropTypes from "prop-types";
+import Icon from "react-native-vector-icons/MaterialIcons";
 import { Loader, NotificationLevel } from "./index";
 import { API, Config, Lang } from "./../../utils/";
 
@@ -103,9 +104,31 @@ export class SideMenu extends Component {
 
     return (
       <SideMenuStyles.container>
-          <Text>I'm in the Drawer!</Text>
+          {this.renderMenuHeader()}
           {this.renderMenu()}
       </SideMenuStyles.container>
+    );
+  }
+
+  renderMenuHeader() {
+    const { navigate, state } = this.props.navigation;
+
+    const onPressHome = () => {
+      if
+      (state.routeName !== "Home") {
+        navigate("Home");
+      }
+    };
+
+    return (
+      <View>
+        <TouchableOpacity style={{}} onPress={onPressHome}>
+            <Icon
+              name="home"
+              size={40}
+            />
+          </TouchableOpacity>
+      </View>
     );
   }
 
