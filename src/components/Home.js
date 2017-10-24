@@ -313,7 +313,7 @@ export default class Home extends Component {
   }
 
   updateCarouselArrows(carousel) {
-    if (this.state[carousel].length > 1) {
+    if (this.state[carousel] !== null && this.state[carousel].length > 1) {
       const { currentIndex } = this.carousels[carousel];
 
       if (currentIndex === 0) {
