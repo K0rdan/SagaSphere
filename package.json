@@ -39,5 +39,10 @@
     "pre-commit": "^1.2.2",
     "react-devtools": "^2.5.0",
     "react-native-cli": "^2.0.1"
+  },
+  "rnpm": {
+      "assets": [
+        "./assets/fonts/"
+      ]
   }
 }

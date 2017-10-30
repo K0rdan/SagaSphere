@@ -18,7 +18,7 @@ To run the APK generation and deployment on the device run :
 > ```react-native run-android```
 
 ## Plugins
-List of plugins installed (or to install):
+List of installed plugins (or to __install__):
 * [react-native-device-info](https://github.com/rebeccahughes/react-native-device-info)
 * [react-native-orientation](https://github.com/yamill/react-native-orientation)
 * [react-native-snap-carousel](https://github.com/archriss/react-native-snap-carousel/)

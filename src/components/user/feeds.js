@@ -23,30 +23,37 @@ const styles = {
     flexDirection: "row"
   },
   feedSectionItemIconContainer: {
+    flex: 0.15,
     marginVertical: 5,
     marginLeft: 5,
     marginRight: 2.5,
-    flex: 0.1
+    alignItems: "center"
   },
   feedSectionItemIcon: {
     width: 40,
-    height: 40,
-    borderColor: "red",
-    borderWidth: 2
+    height: 40
   },
   feedSectionItemTitleContainer: {
-    flex: 0.8,
-    marginHorizontal: 2.5,
-    marginVertical: 5,
-    borderColor: "red",
-    borderWidth: 2
+    flex: 0.7,
+    height: "100%",
+    padding: 5
+  },
+  feedSectionItemTitle: {
+    fontFamily: "Roboto-Black",
+    fontSize: 16
+  },
+  feedSectionItemYear: {
+    marginTop: 0,
+    marginLeft: 2,
+    fontFamily: "Roboto-Italic",
+    fontSize: 12
   },
   feedSectionItemPlayButton: {
-    marginHorizontal: 2.5,
+    flex: 0.15,
     marginVertical: 5,
-    flex: 0.1,
-    borderColor: "red",
-    borderWidth: 2
+    marginLeft: 2.5,
+    marginRight: 5,
+    alignItems: "center"
   }
 };
 
@@ -130,9 +137,11 @@ export class Feeds extends Component {
             { this.renderFeedsSectionItemIcon(rowData) }
           </View>
           <View style={styles.feedSectionItemTitleContainer}>
-            <Text style={{ height: "100%" }}>
-              {rowData.item.title}
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={styles.feedSectionItemTitle}>{rowData.item.title}</Text>
+              <Text style={styles.feedSectionItemYear}>({new Date(rowData.item.creation).getFullYear()})</Text>
+            </View>
+            <Text style={{ fontSize: 11, fontStyle: "italic", marginTop: 2 }}>'T' tracks, 'H'h 'M'min 'S'sec</Text>
           </View>
           <TouchableOpacity
             style={styles.feedSectionItemPlayButton}
@@ -140,7 +149,7 @@ export class Feeds extends Component {
           >
             <Icon
               name="play-arrow"
-              size={40}
+              size={36}
             />
           </TouchableOpacity>
         </View>
@@ -175,14 +184,13 @@ export class Feeds extends Component {
                 onLoadStart={() => this.imageLoadingHandler(rowData.item, "start")}
                 onLoadEnd={() => this.imageLoadingHandler(rowData.item, "end")}
               /> :
-              <Icon name="queue-music" size={40} />
+              <Icon name="queue-music" size={40} style={styles.feedSectionItemIcon} />
           }
         </View>
       );
     }
 
     imageLoadingHandler(rowDataItem, loadState) {
-      this.updateDatasourceLoadingState(rowDataItem, loadState);
       const { dataSource } = this.state;
       map(dataSource, (section, sectionIndex) => {
         const sagaIndex = findIndex(section.data, saga => rowDataItem === saga);
