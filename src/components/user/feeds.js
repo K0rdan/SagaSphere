@@ -145,7 +145,12 @@ export class Feeds extends Component {
             <View style={styles.feedSectionItemIconContainer}>
               { this.renderFeedsSectionItemIcon(rowData) }
             </View>
-            <View style={styles.feedSectionItemTitleContainer}>
+            <TouchableOpacity
+              style={styles.feedSectionItemTitleContainer}
+              onPress={() => {
+                this.props.navigation.navigate("SagaDetails", { user: this.state.user, saga: rowData.item });
+              }}
+            >
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Text style={styles.feedSectionItemTitle}>{rowData.item.title}</Text>
                 <Text style={styles.feedSectionItemYear}>({new Date(rowData.item.creation).getFullYear()})</Text>
@@ -156,7 +161,7 @@ export class Feeds extends Component {
                   </Text> :
                   null
               }
-            </View>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.feedSectionItemPlayButton}
               onPress={null}
