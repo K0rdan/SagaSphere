@@ -124,6 +124,7 @@ export class Feeds extends Component {
         navigation={this.props.navigation}
         renderContent={this.renderContent.bind(this)}
         showNotification={this.state.showNotification}
+        currentPage={Lang[Config.Lang].Menu.User.Feeds}
         user={this.state.user}
       />);
     }
@@ -151,7 +152,7 @@ export class Feeds extends Component {
               </View>
               { rowData.item.tracks !== null ?
                   <Text style={styles.feedSectionItemTracks}>
-                    {`${rowData.item.tracks} tracks, duration : ${duration.days() > 0 ? `${duration.days()}${Lang[Config.Lang].Units.DayShort} ` : ""}${duration.hours() > 0 ? `${duration.hours()}${Lang[Config.Lang].Units.HourShort} ` : ""}${duration.minutes() > 0 ? `${duration.minutes()}${Lang[Config.Lang].Units.MinuteShort} ` : ""}${duration.seconds() > 0 ? `${duration.seconds()}${Lang[Config.Lang].Units.SecondShort}` : ""}`}
+                    {`${rowData.item.tracks} ${Lang[Config.Lang].Miscellaneous.Tracks}, ${Lang[Config.Lang].Miscellaneous.Duration} : ${duration.days() > 0 ? `${duration.days()}${Lang[Config.Lang].Units.DayShort} ` : ""}${duration.hours() > 0 ? `${duration.hours()}${Lang[Config.Lang].Units.HourShort} ` : ""}${duration.minutes() > 0 ? `${duration.minutes()}${Lang[Config.Lang].Units.MinuteShort} ` : ""}${duration.seconds() > 0 ? `${duration.seconds()}${Lang[Config.Lang].Units.SecondShort}` : ""}`}
                   </Text> :
                   null
               }

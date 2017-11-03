@@ -30,6 +30,11 @@ export const Lang = {
       Second: "second",
       Seconds: "seconds",
       SecondShort: "s"
+    },
+    Miscellaneous: {
+      Track: "piste",
+      Tracks: "pistes",
+      Duration: "durée"
     }
   },
   EN: {
@@ -63,6 +68,11 @@ export const Lang = {
       Second: "second",
       Seconds: "seconds",
       SecondShort: "s"
+    },
+    Miscellaneous: {
+      Track: "track",
+      Tracks: "tracks",
+      Duration: "duration"
     }
   }
 };
