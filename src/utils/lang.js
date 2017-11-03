@@ -16,6 +16,20 @@ export const Lang = {
         Login: "Authentification",
         Feeds: "Mes sagas"
       }
+    },
+    Units: {
+      Day: "jour",
+      Days: "jours",
+      DayShort: "j",
+      Hour: "heure",
+      Hours: "heures",
+      HourShort: "h",
+      Minute: "minute",
+      Minutes: "minutes",
+      MinuteShort: "min",
+      Second: "second",
+      Seconds: "seconds",
+      SecondShort: "s"
     }
   },
   EN: {
@@ -35,6 +49,20 @@ export const Lang = {
         Login: "Sign in",
         Feeds: "My sagas"
       }
+    },
+    Units: {
+      Day: "day",
+      Days: "days",
+      DayShort: "d",
+      Hour: "hour",
+      Hours: "hours",
+      HourShort: "h",
+      Minute: "minute",
+      Minutes: "minutes",
+      MinuteShort: "min",
+      Second: "second",
+      Seconds: "seconds",
+      SecondShort: "s"
     }
   }
 };

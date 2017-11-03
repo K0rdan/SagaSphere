@@ -3,8 +3,9 @@ import { Image, Text, View, SectionList, TouchableOpacity } from "react-native";
 import PropTypes from "prop-types";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { findIndex, map } from "lodash";
+import moment from "moment";
 import { Loader, NotificationLevel } from "./../common/";
-import { API, Config } from "./../../utils/";
+import { API, Config, Lang } from "./../../utils/";
 import Page from "./../page";
 
 const styles = {
@@ -41,6 +42,11 @@ const styles = {
   feedSectionItemTitle: {
     fontFamily: "Roboto-Black",
     fontSize: 16
+  },
+  feedSectionItemTracks: {
+    marginTop: 2,
+    fontSize: 11,
+    fontStyle: "italic"
   },
   feedSectionItemYear: {
     marginTop: 0,
@@ -131,29 +137,37 @@ export class Feeds extends Component {
         </View>
       );
 
-      const renderFeedsSectionItem = rowData => (
-        <View style={styles.feedSectionItemContainer}>
-          <View style={styles.feedSectionItemIconContainer}>
-            { this.renderFeedsSectionItemIcon(rowData) }
-          </View>
-          <View style={styles.feedSectionItemTitleContainer}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={styles.feedSectionItemTitle}>{rowData.item.title}</Text>
-              <Text style={styles.feedSectionItemYear}>({new Date(rowData.item.creation).getFullYear()})</Text>
+      const renderFeedsSectionItem = (rowData) => {
+        const duration = moment.duration(rowData.item.duration, "seconds");
+        return (
+          <View style={styles.feedSectionItemContainer}>
+            <View style={styles.feedSectionItemIconContainer}>
+              { this.renderFeedsSectionItemIcon(rowData) }
             </View>
-            <Text style={{ fontSize: 11, fontStyle: "italic", marginTop: 2 }}>'T' tracks, 'H'h 'M'min 'S'sec</Text>
+            <View style={styles.feedSectionItemTitleContainer}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text style={styles.feedSectionItemTitle}>{rowData.item.title}</Text>
+                <Text style={styles.feedSectionItemYear}>({new Date(rowData.item.creation).getFullYear()})</Text>
+              </View>
+              { rowData.item.tracks !== null ?
+                  <Text style={styles.feedSectionItemTracks}>
+                    {`${rowData.item.tracks} tracks, duration : ${duration.days() > 0 ? `${duration.days()}${Lang[Config.Lang].Units.DayShort} ` : ""}${duration.hours() > 0 ? `${duration.hours()}${Lang[Config.Lang].Units.HourShort} ` : ""}${duration.minutes() > 0 ? `${duration.minutes()}${Lang[Config.Lang].Units.MinuteShort} ` : ""}${duration.seconds() > 0 ? `${duration.seconds()}${Lang[Config.Lang].Units.SecondShort}` : ""}`}
+                  </Text> :
+                  null
+              }
+            </View>
+            <TouchableOpacity
+              style={styles.feedSectionItemPlayButton}
+              onPress={null}
+            >
+              <Icon
+                name="play-arrow"
+                size={36}
+              />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={styles.feedSectionItemPlayButton}
-            onPress={null}
-          >
-            <Icon
-              name="play-arrow"
-              size={36}
-            />
-          </TouchableOpacity>
-        </View>
-      );
+        );
+      };
 
       if (this.state && this.state.dataSource) {
         return (
