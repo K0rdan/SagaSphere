@@ -34,7 +34,11 @@ export const Lang = {
     Miscellaneous: {
       Track: "piste",
       Tracks: "pistes",
-      Duration: "durée"
+      Duration: "durée",
+      Summary: "Résumé",
+      Author: "Auteur",
+      Episode: "Episode",
+      Episodes: "Episodes"
     }
   },
   EN: {
@@ -72,7 +76,11 @@ export const Lang = {
     Miscellaneous: {
       Track: "track",
       Tracks: "tracks",
-      Duration: "duration"
+      Duration: "duration",
+      Summary: "Summary",
+      Author: "Author",
+      Episode: "Episode",
+      Episodes: "Episodes"
     }
   }
 };

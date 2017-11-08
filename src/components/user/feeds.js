@@ -96,7 +96,6 @@ export class Feeds extends Component {
 
     formatFeeds(feedsJson) {
       const feedsMaped = [];
-
       feedsJson.data.forEach((feed, i) => {
         if (feed.title && feed.title.length > 1) {
           const firstChar = feed.title.substring(0, 1);
@@ -148,7 +147,13 @@ export class Feeds extends Component {
             <TouchableOpacity
               style={styles.feedSectionItemTitleContainer}
               onPress={() => {
-                this.props.navigation.navigate("SagaDetails", { user: this.state.user, saga: rowData.item });
+                this.props.navigation.navigate("SagaDetails", {
+                  user: this.state.user,
+                  saga: rowData.item,
+                  showSummary: false,
+                  showAuthor: false,
+                  showEpisodes: true
+                });
               }}
             >
               <View style={{ flexDirection: "row", alignItems: "center" }}>
