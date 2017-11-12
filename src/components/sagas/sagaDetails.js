@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Text, View, TouchableOpacity, UIManager, Platform, LayoutAnimation } from "react-native";
+import { Text, View, TouchableOpacity, UIManager, Platform, LayoutAnimation, FlatList } from "react-native";
 import PropTypes from "prop-types";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { map } from "lodash";
+import moment from "moment";
 import Page from "./../page";
-import { Error } from "./../common";
-import { Config, Lang } from "./../../utils/";
+import { Error, NotificationLevel, Loader } from "./../common";
+import { API, Config, Lang } from "./../../utils/";
 
 const styles = {
   sectionHeader: {
@@ -24,14 +25,28 @@ const styles = {
     right: 0,
     color: "white"
   },
-  containerSummary: {
-
+  episodesTrackContainer: {
+    flexDirection: "row"
   },
-  containerAuthor: {
-
+  episodesTrackNum: {
+    flex: 0.05,
+    textAlign: "center",
+    textAlignVertical: "center"
   },
-  containerEpisodes: {
-
+  episodesTrackTitle: {
+    flex: 0.65,
+    textAlign: "center",
+    textAlignVertical: "center"
+  },
+  episodesTrackDuration: {
+    flex: 0.20,
+    textAlign: "center",
+    textAlignVertical: "center"
+  },
+  episodesTrackPlayButton: {
+    flex: 0.10,
+    textAlign: "center",
+    textAlignVertical: "center"
   }
 };
 
@@ -67,9 +82,44 @@ export class SagaDetails extends Component {
       showSummary: showSummary === true,
       showAuthor: showAuthor === true,
       showEpisodes: showEpisodes === true,
+      episodes: null,
+      episodesDataSource: null,
       error: null,
       showNotification: null
     };
+  }
+
+  componentWillMount() {
+    this.fetchEpisodes();
+  }
+
+  fetchEpisodes() {
+    return API(Config.EndPoints.saga.episodes(this.state.saga.id))
+      .then(this.formatEpisodes.bind(this))
+      .catch((err) => {
+        this.setState({
+          showNotification: {
+            message: err.message,
+            level: NotificationLevel.err
+          }
+        });
+      });
+  }
+
+  formatEpisodes(tracksJson) {
+    // Did we get tracks ?
+    if (tracksJson.data) {
+      const tracksMaped = [];
+
+      tracksJson.data.forEach((article, i) => {
+        tracksMaped.push(Object.assign(article, { key: i }));
+      });
+
+      this.setState({
+        episodes: tracksJson.data,
+        episodesDataSource: tracksMaped
+      });
+    }
   }
 
   render() {
@@ -91,7 +141,7 @@ export class SagaDetails extends Component {
       <View>
         <Text>{this.state.saga.title}</Text>
         {map(["Summary", "Author", "Episodes"], sectionName =>
-          this.renderSections(sectionName, this[`render${sectionName}`]))}
+          this.renderSections(sectionName, this[`render${sectionName}`].bind(this)))}
       </View>
     );
   }
@@ -132,11 +182,42 @@ export class SagaDetails extends Component {
   }
 
   renderEpisodes() {
-    return (
-      <View>
-        <Text>Episodes content !</Text>
-      </View>
-    );
+    const renderRow = (rowData) => {
+      const duration = moment.duration(rowData.item.duration, "seconds");
+      return (
+        <TouchableOpacity
+          style={styles.episodesTrackContainer}
+          onPress={null}
+        >
+          <Text style={styles.episodesTrackNum}>{rowData.item.trackNumber}</Text>
+          <Text style={styles.episodesTrackTitle}>{rowData.item.name}</Text>
+          <Text style={styles.episodesTrackDuration}>{`${duration.hours() > 0 ? `${duration.hours()}${Lang[Config.Lang].Units.HourShort} ` : ""}${duration.minutes() > 0 ? `${duration.minutes()}${Lang[Config.Lang].Units.MinuteShort} ` : ""}${duration.seconds() > 0 ? `${duration.seconds()}${Lang[Config.Lang].Units.SecondShort}` : ""}`}</Text>
+          <Icon
+            name={"play-arrow"}
+            size={36}
+            style={styles.episodesTrackPlayButton}
+          />
+        </TouchableOpacity>
+      );
+    };
+
+    if (this.state && this.state.episodesDataSource) {
+      return (
+        <View>
+          <View style={styles.episodesTrackContainer}>
+            <Text style={styles.episodesTrackNum}>N°</Text>
+            <Text style={styles.episodesTrackTitle}>Titre</Text>
+            <Text style={styles.episodesTrackDuration}>Durée</Text>
+            <Text style={styles.episodesTrackPlayButton}>&nbsp;</Text>
+          </View>
+          <FlatList
+            data={this.state.episodesDataSource}
+            renderItem={renderRow} />
+        </View>
+        );
+    }
+
+    return <Loader />;
   }
 
   toggleSection(sectionName) {

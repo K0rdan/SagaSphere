@@ -20,7 +20,15 @@ export const Config = {
     saga: {
       latest: `${base}/episodes/latest`,
       list: `${base}/sagalist`,
-      news: `${base}/saga/news`
+      news: `${base}/saga/news`,
+      episodes: (sagaId) => {
+        const id = parseInt(sagaId, 10);
+        if (!Number.isNaN(id)) {
+          return `${base}/saga/${id}/tracklist`;
+        }
+
+        return new Error(`Invalid parameter. Expecting a 'Number' got : '${typeof sagaId}'`);
+      }
     },
     episodes: {
       latest: `${base}/episodes/latest`
