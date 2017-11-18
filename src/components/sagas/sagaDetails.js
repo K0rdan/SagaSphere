@@ -9,6 +9,9 @@ import { Error, NotificationLevel, Loader } from "./../common";
 import { API, Config, Lang } from "./../../utils/";
 
 const styles = {
+  container: {
+    flex: 1
+  },
   sectionHeader: {
     position: "relative",
     flexDirection: "row",
@@ -24,6 +27,9 @@ const styles = {
     position: "absolute",
     right: 0,
     color: "white"
+  },
+  containerEpisodes: {
+    flex: 1
   },
   episodesTrackContainer: {
     flexDirection: "row"
@@ -47,6 +53,20 @@ const styles = {
     flex: 0.10,
     textAlign: "center",
     textAlignVertical: "center"
+  },
+  episodesPlayAll: {
+    position: "absolute",
+    bottom: 10,
+    left: "50%",
+    marginLeft: -75
+  },
+  episodesPlayAllButton: {
+    width: 150,
+    flexDirection: "row",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "red",
+    borderRadius: 25
   }
 };
 
@@ -138,7 +158,7 @@ export class SagaDetails extends Component {
 
   renderContent() {
     return (
-      <View>
+      <View style={styles.container}>
         <Text>{this.state.saga.title}</Text>
         {map(["Summary", "Author", "Episodes"], sectionName =>
           this.renderSections(sectionName, this[`render${sectionName}`].bind(this)))}
@@ -182,12 +202,20 @@ export class SagaDetails extends Component {
   }
 
   renderEpisodes() {
+    const { navigation: { navigate } } = this.props;
+
     const renderRow = (rowData) => {
       const duration = moment.duration(rowData.item.duration, "seconds");
       return (
         <TouchableOpacity
           style={styles.episodesTrackContainer}
-          onPress={null}
+          onPress={() => navigate("Player", {
+            user: this.state.user,
+            saga: this.state.saga,
+            playlist: [
+              rowData.item
+            ]
+          })}
         >
           <Text style={styles.episodesTrackNum}>{rowData.item.trackNumber}</Text>
           <Text style={styles.episodesTrackTitle}>{rowData.item.name}</Text>
@@ -203,7 +231,7 @@ export class SagaDetails extends Component {
 
     if (this.state && this.state.episodesDataSource) {
       return (
-        <View>
+        <View style={styles.containerEpisodes}>
           <View style={styles.episodesTrackContainer}>
             <Text style={styles.episodesTrackNum}>N°</Text>
             <Text style={styles.episodesTrackTitle}>Titre</Text>
@@ -212,7 +240,24 @@ export class SagaDetails extends Component {
           </View>
           <FlatList
             data={this.state.episodesDataSource}
-            renderItem={renderRow} />
+            renderItem={renderRow}
+          />
+          <View style={styles.episodesPlayAll}>
+            <TouchableOpacity
+              style={styles.episodesPlayAllButton}
+              onPress={() => navigate("Player", {
+                user: this.state.user,
+                playlist: this.state.episodesDataSource
+              })}
+            >
+              <Text style={{ textAlignVertical: "center" }}>Tout écouter</Text>
+              <Icon
+                name={"play-arrow"}
+                size={30}
+                style={{ marginRight: -10 }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         );
     }
