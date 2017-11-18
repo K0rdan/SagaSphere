@@ -9,6 +9,7 @@ const SagaSphere = StackNavigator({
   Login: { screen: routes.Login, navigationOptions: { title: Lang[Config.Lang].Menu.User.Login } },
   SagaList: { screen: routes.SagaList, navigationOptions: { title: Lang[Config.Lang].Menu.SagaList } },
   SagaDetails: { screen: routes.SagaDetails },
+  Player: { screen: routes.Player },
   News: { screen: routes.News, navigationOptions: { title: Lang[Config.Lang].Menu.News } },
   Feeds: { screen: routes.Feeds, navigationOptions: { title: Lang[Config.Lang].Menu.User.Feeds } }
 }, {

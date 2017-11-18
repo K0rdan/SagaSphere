@@ -23,6 +23,9 @@ List of installed plugins (or to __install__):
 * [react-native-orientation](https://github.com/yamill/react-native-orientation)
 * [react-native-snap-carousel](https://github.com/archriss/react-native-snap-carousel/)
 * [react-native-vector-icons](https://github.com/oblador/react-native-vector-icons)
+* [react-native-fetch-blob](https://github.com/wkh237/react-native-fetch-blob)
+* [react-native-zip-archive](https://github.com/mockingbot/react-native-zip-archive)
+* [react-native-sound](https://github.com/zmxv/react-native-sound/wiki/Installation)
 
 ## Specifications
 ### Saga specifications
