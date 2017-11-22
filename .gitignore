@@ -7,3 +7,4 @@ android/
 .watchmanconfig
 app.json
 jsconfig.json
+yarn-error.log

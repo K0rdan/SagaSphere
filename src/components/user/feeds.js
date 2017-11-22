@@ -191,14 +191,14 @@ export class Feeds extends Component {
         );
       }
 
-      return <Loader />;
+      return <Loader style={{ backgroundColor: "transparent" }}/>;
     }
 
     renderFeedsSectionItemIcon(rowData) {
       return (
-        <View style={{ position: "relative" }}>
+        <View style={{ flex: 1 }}>
           { rowData.item.imageLoadingState === "start" ?
-              <Loader style={{ position: "absolute" }}/> :
+              <Loader size={90} style={{ backgroundColor: "transparent" }}/> :
               null
           }
           { rowData.item.imageLoadingState !== "timeout" ?

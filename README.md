@@ -6,7 +6,10 @@ warning "eslint-config-airbnb@15.1.0" has incorrect peer dependency "eslint-plug
 ```
 
 ## Installation
-```yarn install```
+```
+yarn install
+react-native link
+```
 
 ## Run
 If there is not android folder, regenerate the full react-native boiler plate, with the command :
