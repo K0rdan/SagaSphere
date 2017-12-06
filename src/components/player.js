@@ -33,6 +33,7 @@ export class Player extends Component {
     super(props);
 
     this.fetchTrack = this.fetchTrack.bind(this);
+    this.onPlayEnd = this.onPlayEnd.bind(this);
     this.isPlaying = this.isPlaying.bind(this);
     this.playlistChange = this.playlistChange.bind(this);
 
@@ -51,6 +52,7 @@ export class Player extends Component {
         time: "00:00:00",
         duration: "00:00:00",
         isPlaying: false,
+        intervalID: null,
         details: null
       },
       loading: false,
@@ -122,19 +124,18 @@ export class Player extends Component {
         throw err;
       }
 
+      const { currentTrack } = this.state;
       const intervalID = setInterval(this.getCurrentTime.bind(this), 100);
 
-      track.play(() => {
-        // onEnd
-        clearInterval(intervalID);
-        this.playlistChange(this.state.currentTrack.number++);
-      });
+      track.play();
 
       this.setState({
         loading: false,
         loadingState: "completed",
         loadingPercent: 0,
-        currentTrack: Object.assign(this.state.currentTrack, {
+        currentTrack: Object.assign(currentTrack, {
+          intervalID,
+          isPlaying: true,
           duration: moment.duration(track.getDuration(), "seconds"),
           details: track
         })
@@ -166,6 +167,12 @@ export class Player extends Component {
             time: Date.timeAsHourMinSec(duration)
           })
         });
+
+        // Check if the track is ended
+        const currentTrackDuration = moment.duration(currentTrack.details.getDuration(), "seconds").asMilliseconds()
+        if (Math.abs(currentTrackDuration - duration) < 10) {
+          this.onPlayEnd();
+        }
       });
     }
   }
@@ -173,7 +180,6 @@ export class Player extends Component {
   setCurrentTime(newTime) {
     const { currentTrack } = this.state;
     if (currentTrack.details) {
-      this.togglePlay();
       if (newTime < 0) {
         // TODO : playlist previous
         console.log("Playlist previous ?");
@@ -187,8 +193,6 @@ export class Player extends Component {
       else {
         currentTrack.details.setCurrentTime(newTime);
       }
-
-      this.togglePlay();
     }
   }
 
@@ -205,6 +209,17 @@ export class Player extends Component {
       });
       this.fetchTrack();
     }
+    else {
+      // Reset playlist the last track played
+      this.setState({
+        currentTrack: {
+          isPlaying: false,
+          number: trackNumber,
+          time: "00:00:00",
+          duration: "00:00:00"
+        }
+      });
+    }
   }
 
   async togglePlay() {
@@ -217,14 +232,20 @@ export class Player extends Component {
     else if (isPlaying === false) {
       currentTrack.details.play();
     }
-
     if (isPlaying !== null) {
       this.setState({
         currentTrack: Object.assign(currentTrack, {
-          isPlaying
+          isPlaying: !isPlaying
         })
       });
     }
+  }
+
+  onPlayEnd() {
+    const { currentTrack } = this.state;
+
+    clearInterval(currentTrack.intervalID);
+    this.playlistChange(currentTrack.number + 1);
   }
 
   render() {
@@ -248,7 +269,6 @@ export class Player extends Component {
       currentTrack
     } = this.state;
     const currentTime = moment.duration(currentTrack.time).asSeconds();
-    const timePercent = (currentTime * 100) / moment.duration(currentTrack.duration).asSeconds();
     const loader = (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text style={{ fontFamily: "Roboto-Black", fontSize: 12 }}>{loadingState}</Text>
@@ -274,30 +294,62 @@ export class Player extends Component {
               <View style={styles.actionBar}>
                 {renderButton(35, "skip-previous", () => this.playlistChange(currentTrack.number - 1))}
                 {renderButton(40, "replay-30", () => this.setCurrentTime(currentTime - 30))}
-                {renderButton(55, `${currentTrack.isPlaying ?
-                    "play" :
-                    "pause"
-                  }-circle-outline`, this.togglePlay.bind(this))}
+                {renderButton(
+                  55,
+                  `${currentTrack.isPlaying ? "pause" : "play"}-circle-outline`,
+                  this.togglePlay.bind(this)
+                )}
                 {renderButton(40, "forward-30", () => this.setCurrentTime(currentTime + 30))}
                 {renderButton(35, "skip-next", () => this.playlistChange(currentTrack.number + 1))}
               </View>
               <View style={styles.playbackBar}>
                 <Text style={{ fontFamily: "Roboto-Black", margin: 10 }}>{currentTrack.time}</Text>
                 <View style={{ flex: 1, justifyContent: "center" }}>
-                  <Slider
-                    value={timePercent}
-                    maximumValue={100}
-                    onValueChange={(value) => {
-                      const convertedValue = (value * moment.duration(currentTrack.duration).asSeconds()) / 100;
-                      this.setCurrentTime(convertedValue);
-                    }}
-                  />
+                  {this.renderSlider()}
                 </View>
                 <Text style={{ fontFamily: "Roboto-Black", margin: 10 }}>{Date.timeAsHourMinSec(currentTrack.duration)}</Text>
               </View>
             </View>
         }
       </View>
+    );
+  }
+
+  renderSlider() {
+    const { currentTrack } = this.state;
+    const currentTime = moment.duration(currentTrack.time).asSeconds();
+    const timePercent = (currentTime * 100) / moment.duration(currentTrack.duration).asSeconds();
+
+    const onSlideStart = () => {
+      if (currentTrack.isPlaying === true) {
+        this.togglePlay();
+        this.setState({
+          currentTrack: Object.assign(currentTrack, {
+            wasPlaying: currentTrack.isPlaying
+          })
+        });
+      }
+    };
+    const onSlideEnd = (value) => {
+      const convertedValue = (value * moment.duration(currentTrack.duration).asSeconds()) / 100;
+      this.setCurrentTime(convertedValue);
+      if (currentTrack.wasPlaying === true) {
+        this.togglePlay();
+        this.setState({
+          currentTrack: Object.assign(currentTrack, {
+            wasPlaying: null
+          })
+        });
+      }
+    };
+
+    return (
+      <Slider
+        value={timePercent}
+        maximumValue={100}
+        onTouchStart={onSlideStart}
+        onSlidingComplete={onSlideEnd}
+      />
     );
   }
 }
