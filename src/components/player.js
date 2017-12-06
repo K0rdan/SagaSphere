@@ -169,7 +169,7 @@ export class Player extends Component {
         });
 
         // Check if the track is ended
-        const currentTrackDuration = moment.duration(currentTrack.details.getDuration(), "seconds").asMilliseconds()
+        const currentTrackDuration = moment.duration(currentTrack.details.getDuration(), "seconds").asMilliseconds();
         if (Math.abs(currentTrackDuration - duration) < 10) {
           this.onPlayEnd();
         }
