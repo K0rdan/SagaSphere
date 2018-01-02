@@ -9,7 +9,6 @@ import routes from "./../../routes";
 export const NavReducer = (state, action) => {
   const { type, routeName } = action;
   let newState;
-  console.log("NavReducer", state, action);
   switch (type) {
     case "Navigation/NAVIGATE":
       if (find(routes, route => route.routeName === routeName)) {

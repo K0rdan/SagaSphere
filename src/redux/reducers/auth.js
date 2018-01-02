@@ -5,7 +5,6 @@ const initialAuthState = {
 };
 
 export const AuthReducer = (state = initialAuthState, action) => {
-  console.log("AuthReducer", state, action);
   const { type, user } = action;
   switch (type) {
     case AuthActions.LOGGING_IN:
