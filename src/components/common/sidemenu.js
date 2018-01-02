@@ -1,13 +1,15 @@
 import React, { Component } from "react";
 import { AsyncStorage, ListView, Text, TouchableOpacity, View } from "react-native";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Loader, NotificationLevel } from "./index";
 import { API, Config, Lang } from "./../../utils/";
+import { AuthActions } from "./../../redux/actions/index";
 
 import { SideMenuStyles } from "./../../styles/";
 
-export class SideMenu extends Component {
+class SideMenuComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -23,7 +25,6 @@ export class SideMenu extends Component {
     }];
 
     this.state = {
-      user: this.props.user || null,
       connecting: false,
       disconnecting: false,
       dataSource: new ListView.DataSource({ rowHasChanged: (a, b) => a !== b }).cloneWithRows(this.menus)
@@ -40,10 +41,10 @@ export class SideMenu extends Component {
 
   menuLoginOnPress() {
     const { navigation, currentPageTitle } = this.props;
-    const { navigate } = navigation;
+    const { dispatch } = navigation;
 
     if (currentPageTitle !== Lang[Config.Lang].Menu.User.Login) {
-      navigate("Login");
+      dispatch({ type: "Navigation/NAVIGATE", routeName: "Login" });
     }
   }
 
@@ -61,8 +62,10 @@ export class SideMenu extends Component {
             if (asyncStorageErr) {
               throw asyncStorageErr;
             }
+            const { dispatch } = this.props.navigation;
             this.setState({ disconnecting: false });
-            navigation.navigate("Login");
+            dispatch({ type: AuthActions.LOGGING_OUT });
+            dispatch({ type: "Navigation/NAVIGATE", routeName: "Login" });
           });
         })
         .catch(async (err) => {
@@ -84,14 +87,14 @@ export class SideMenu extends Component {
   }
 
   menuRowOnPress(data) {
-    const { navigate, state } = this.props.navigation;
+    const { dispatch, state } = this.props.navigation;
 
-    if (navigate != null) {
+    if (dispatch != null) {
       this.menus.forEach((menu) => {
         // If we found the menu in our list and we're not actually on the page.
         // Then we can navigate to it.
         if (menu.title === data.title && menu.routeName !== state.routeName) {
-          navigate(menu.routeName, { user: this.state.user });
+          dispatch({ type: "Navigation/NAVIGATE", routeName: menu.routeName });
         }
       });
     }
@@ -114,8 +117,7 @@ export class SideMenu extends Component {
     const { navigate, state } = this.props.navigation;
 
     const onPressHome = () => {
-      if
-      (state.routeName !== "Home") {
+      if (state.routeName !== "Home") {
         navigate("Home");
       }
     };
@@ -127,13 +129,14 @@ export class SideMenu extends Component {
               name="home"
               size={40}
             />
-          </TouchableOpacity>
+        </TouchableOpacity>
       </View>
     );
   }
 
   renderMenu() {
-    if (this.state.user === null) {
+    const { user } = this.props;
+    if (user === null) {
       return (
         <SideMenuStyles.menuLogin onPress={this.menuLoginOnPress.bind(this)}>
           <Text>Sign in to access to all fonctionalities</Text>
@@ -163,6 +166,7 @@ export class SideMenu extends Component {
       </SideMenuStyles.menuRowContainer>
     );
   }
+
   renderMenuSeparator(sectionId, rowId) {
     // TMP
     this.a = 0;
@@ -171,12 +175,17 @@ export class SideMenu extends Component {
   }
 }
 
-SideMenu.PropTypes = {
-  currentPageTitle: PropTypes.string,
-  drawer: PropTypes.element,
-  navigation: PropTypes.object,
-  showNotification: PropTypes.func,
-  user: PropTypes.object
+SideMenuComponent.PropTypes = {
+  currentPageTitle: PropTypes.string.isRequired,
+  navigation: PropTypes.object.isRequired,
+  showNotification: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired
 };
 
+const mapStateToProps = state => ({
+  isLoggedIn: state.AuthReducer.isLoggedIn,
+  user: state.AuthReducer.user
+});
+
+export const SideMenu = connect(mapStateToProps)(SideMenuComponent);
 export default SideMenu;

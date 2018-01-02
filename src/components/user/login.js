@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { AsyncStorage, Text, View, TouchableOpacity } from "react-native";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Page from "./../page";
 import { Loader, NotificationLevel } from "./../common/";
 import { API, Config, Lang } from "./../../utils/";
+import { AuthActions } from "../../redux/actions/index";
 
-export class Login extends Component {
+class LoginComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -35,13 +37,14 @@ export class Login extends Component {
       API(Config.EndPoints.login, loginHeaders)
         .then(async (jsonObj) => {
           try {
-            const { navigation } = this.props;
+            const { dispatch } = this.props.navigation;
             await AsyncStorage.setItem("user", JSON.stringify(jsonObj.data));
             this.setState({
               user: jsonObj,
               connecting: false
             });
-            navigation.navigate("Home");
+            dispatch({ type: AuthActions.LOGGED_IN, user: jsonObj });
+            dispatch({ type: "Navigation/NAVIGATE", routeName: "Home" });
           }
           catch (err) {
             throw err;
@@ -67,7 +70,6 @@ export class Login extends Component {
       renderContent={this.renderContent.bind(this)}
       showNotification={this.state.showNotification}
       currentPage={this.title}
-      user={this.state.user}
     />);
   }
 
@@ -87,8 +89,16 @@ export class Login extends Component {
   }
 }
 
-Login.PropTypes = {
+LoginComponent.PropTypes = {
   navigation: PropTypes.object
 };
 
+const mapStateToProps = state => ({
+  isLoggedIn: state.AuthReducer.isLoggedIn,
+  user: state.AuthReducer.user
+});
+
+const mapDispatchToProps = dispatch => ({ dispatch });
+
+export const Login = connect(mapStateToProps, mapDispatchToProps)(LoginComponent);
 export default Login;

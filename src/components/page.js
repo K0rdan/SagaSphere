@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { Config } from "./../utils/index";
 import { Header, Loader, Notification, NotificationLevel, SideMenu } from "./common/index";
 
-export default class Page extends Component {
+class Page extends Component {
     constructor(props) {
         super(props);
 
@@ -24,20 +24,15 @@ export default class Page extends Component {
         this.state = {
             appState: AppState.currentState,
             notificationMessage: "",
-            notificationLevel: null,
-            user: null
+            notificationLevel: null
         };
     }
 
     componentWillReceiveProps(nextProps) {
-        const { showNotification, user } = nextProps;
+        const { showNotification } = nextProps;
 
         if (showNotification && showNotification.message && showNotification.level) {
             this.showNotification(showNotification.message, showNotification.level);
-        }
-
-        if (user && user !== null) {
-            this.setState({ user });
         }
     }
 
@@ -127,7 +122,7 @@ export default class Page extends Component {
         return (
             <View style={{ flex: 1 }}>
                 <DrawerLayoutAndroid
-                    ref='drawer'
+                    ref="drawer"
                     drawerWidth={200}
                     drawerPosition={DrawerLayoutAndroid.positions.Left}
                     renderNavigationView={this.renderNavigationView}>
@@ -162,10 +157,8 @@ export default class Page extends Component {
     renderNavigationView() {
         return (<SideMenu
             navigation={this.props.navigation}
-            drawer={this.refs.drawer}
             currentPageTitle={this.title}
             showNotification={this.showNotification}
-            user={this.state.user}
         />);
     }
 }
@@ -173,6 +166,7 @@ export default class Page extends Component {
 Page.PropTypes = {
     currentPage: PropTypes.string,
     navigation: PropTypes.object,
-    renderContent: PropTypes.func,
-    user: PropTypes.object
+    renderContent: PropTypes.func
 };
+
+export default Page;

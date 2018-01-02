@@ -7,6 +7,7 @@
     "lint:staged": "lint-staged",
     "lint:eslint": "eslint",
     "start": "node node_modules/react-native/local-cli/cli.js start",
+    "adbr": "adb reverse tcp:8081 tcp:8081",
     "srdm": "yarn show-react-dev-menu",
     "show-react-dev-menu": "adb shell input keyevent KEYCODE_MENU"
   },
@@ -30,6 +31,10 @@
     "react-native-vector-icons": "^4.4.2",
     "react-native-zip-archive": "^2.1.0",
     "react-navigation": "^1.0.0-beta.19",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.2.0",
     "styled-components": "^2.1.1"
   },
   "devDependencies": {

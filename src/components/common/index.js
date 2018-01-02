@@ -1,7 +1,7 @@
 import { Header } from "./header";
 import { Loader } from "./loader";
 import { Notification } from "./notification";
-import { Sidemenu } from "./sidemenu";
+import { SideMenu } from "./sidemenu";
 import { Error } from "./error";
 
 export * from "./header";
@@ -14,7 +14,7 @@ export const Common = {
     Header,
     Loader,
     Notification,
-    Sidemenu,
+    SideMenu,
     Error
 };
 

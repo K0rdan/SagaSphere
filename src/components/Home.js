@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { AsyncStorage, Text, View, AppState, TouchableOpacity } from "react-native";
+import { Text, View, AppState, TouchableOpacity } from "react-native";
+import { connect } from "react-redux";
 import { map } from "lodash";
 import Orientation from "react-native-orientation";
 import Carousel from "react-native-snap-carousel";
@@ -8,6 +9,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import Page from "./page";
 import { API, Config, Lang } from "./../utils/";
 import { Loader, NotificationLevel, Error } from "./common/";
+import { AuthActions } from "../redux/actions/index";
 
 const styles = {
   horizontalSeparator: {
@@ -55,7 +57,7 @@ const styles = {
   }
 };
 
-export default class Home extends Component {
+class HomeComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -75,7 +77,6 @@ export default class Home extends Component {
     };
 
     this.state = {
-      user: null,
       latestSagas: null,
       latestSagasArrows: {
         left: false,
@@ -98,7 +99,8 @@ export default class Home extends Component {
   }
 
   componentWillMount() {
-    this.retrieveUser();
+    const { dispatch } = this.props;
+    dispatch(AuthActions.retrieveUser());
     this.fetchData();
 
     Orientation.getOrientation((err, orientation) => {
@@ -152,24 +154,6 @@ export default class Home extends Component {
     }
 
     this.setState({ appState });
-  }
-
-  async retrieveUser() {
-    try {
-      const user = await AsyncStorage.getItem("user");
-      if (user !== null) {
-        this.setState({ user: JSON.parse(user) });
-      }
-    }
-    catch (error) {
-      this.setState({
-        showNotification: {
-          message: error,
-          level: NotificationLevel.err
-        },
-        error
-      });
-    }
   }
 
   fetchData() {
@@ -227,7 +211,7 @@ export default class Home extends Component {
         renderContent={this.state.error === null ? this.renderContent.bind(this) : this.renderError.bind(this)}
         showNotification={this.state.showNotification}
         currentPage={Lang[Config.Lang].Menu.News}
-        user={this.state.user} />
+      />
     );
   }
 
@@ -356,6 +340,21 @@ export default class Home extends Component {
   }
 }
 
-Home.PropTypes = {
-  navigation: PropTypes.object
+HomeComponent.PropTypes = {
+  navigation: PropTypes.object.isRequired,
+  isLoggedIn: PropTypes.bool.isRequired,
+  user: PropTypes.object.isRequired
 };
+
+const mapStateToProps = (state) => {
+  console.log("Home, mapStateToProps, state", state);
+  return {
+    isLoggedIn: state.AuthReducer.isLoggedIn,
+    user: state.AuthReducer.user
+  };
+};
+
+const mapDispatchToProps = dispatch => ({ dispatch });
+
+export const Home = connect(mapStateToProps, mapDispatchToProps)(HomeComponent);
+export default Home;

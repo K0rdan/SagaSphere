@@ -14,7 +14,6 @@ export class SagaList extends Component {
       this.formatSagas = this.formatSagas.bind(this);
 
       this.state = {
-        user: this.props.navigation.state.params.user || null,
         showNotification: null
       };
     }
@@ -66,7 +65,6 @@ export class SagaList extends Component {
         navigation={this.props.navigation}
         renderContent={this.renderContent.bind(this)}
         showNotification={this.state.showNotification}
-        user={this.state.user}
       />);
     }
 
@@ -94,8 +92,8 @@ export class SagaList extends Component {
     }
 }
 
-export default SagaList;
-
 SagaList.PropTypes = {
   navigation: PropTypes.object
 };
+
+export default SagaList;
