@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text, Slider, View, TouchableOpacity } from "react-native";
+import { connect } from "react-redux";
 import RNFetchBlob from "react-native-fetch-blob";
 import { unzip } from "react-native-zip-archive";
 import Sound from "react-native-sound";
@@ -28,7 +29,7 @@ const styles = {
   }
 };
 
-export class Player extends Component {
+class PlayerComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -354,9 +355,13 @@ export class Player extends Component {
   }
 }
 
-export default Player;
-
-Player.PropTypes = {
-  navigation: PropTypes.object,
+PlayerComponent.PropTypes = {
+  navigation: PropTypes.object.isRequired,
   playlist: PropTypes.array.isRequired
 };
+
+const mapStateToProps = state => state;
+const mapDispatchToProps = dispatch => ({ dispatch });
+
+export const Player = connect(mapStateToProps, mapDispatchToProps)(PlayerComponent);
+export default Player;

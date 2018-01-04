@@ -201,18 +201,22 @@ class SagaDetailsComponent extends Component {
   }
 
   renderEpisodes() {
-    const { navigation: { navigate } } = this.props;
+    const { dispatch } = this.props.navigation;
 
     const renderRow = (rowData) => {
       const duration = moment.duration(rowData.item.duration, "seconds");
       return (
         <TouchableOpacity
           style={styles.episodesTrackContainer}
-          onPress={() => navigate("Player", {
-            saga: this.state.saga,
-            playlist: [
-              rowData.item
-            ]
+          onPress={() => dispatch({
+            type: "Navigation/NAVIGATE",
+            routeName: "Player",
+            routeParams: {
+              saga: this.state.saga,
+              playlist: [
+                rowData.item
+              ]
+            }
           })}
         >
           <Text style={styles.episodesTrackNum}>{rowData.item.trackNumber}</Text>
@@ -243,8 +247,12 @@ class SagaDetailsComponent extends Component {
           <View style={styles.episodesPlayAll}>
             <TouchableOpacity
               style={styles.episodesPlayAllButton}
-              onPress={() => navigate("Player", {
-                playlist: this.state.episodesDataSource
+              onPress={() => dispatch({
+                type: "Navigation/NAVIGATE",
+                routeName: "Player",
+                routeParams: {
+                  playlist: this.state.episodesDataSource
+                }
               })}
             >
               <Text style={{ textAlignVertical: "center" }}>Tout écouter</Text>
