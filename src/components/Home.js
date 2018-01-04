@@ -346,13 +346,10 @@ HomeComponent.PropTypes = {
   user: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => {
-  console.log("Home, mapStateToProps, state", state);
-  return {
-    isLoggedIn: state.AuthReducer.isLoggedIn,
-    user: state.AuthReducer.user
-  };
-};
+const mapStateToProps = state => ({
+  isLoggedIn: state.AuthReducer.isLoggedIn,
+  user: state.AuthReducer.user
+});
 
 const mapDispatchToProps = dispatch => ({ dispatch });
 

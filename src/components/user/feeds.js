@@ -72,8 +72,7 @@ export class Feeds extends Component {
       this.state = {
         dataSource: null,
         sagas: null,
-        showNotification: null,
-        user: this.props.navigation.state.params.user || null
+        showNotification: null
       };
     }
 
@@ -124,11 +123,12 @@ export class Feeds extends Component {
         renderContent={this.renderContent.bind(this)}
         showNotification={this.state.showNotification}
         currentPage={Lang[Config.Lang].Menu.User.Feeds}
-        user={this.state.user}
       />);
     }
 
     renderContent() {
+      const { dispatch } = this.props.navigation;
+
       const renderFeedsSectionHeader = section => (
         <View style={styles.feedSectionHeaderContainer}>
           <Text style={styles.feedSectionHeaderText}>
@@ -147,12 +147,15 @@ export class Feeds extends Component {
             <TouchableOpacity
               style={styles.feedSectionItemTitleContainer}
               onPress={() => {
-                this.props.navigation.navigate("SagaDetails", {
-                  user: this.state.user,
-                  saga: rowData.item,
-                  showSummary: false,
-                  showAuthor: false,
-                  showEpisodes: true
+                dispatch({
+                  type: "Navigation/NAVIGATE",
+                  routeName: "SagaDetails",
+                  routeParams: {
+                    saga: rowData.item,
+                    showSummary: false,
+                    showAuthor: false,
+                    showEpisodes: true
+                  }
                 });
               }}
             >

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text, View, TouchableOpacity, UIManager, Platform, LayoutAnimation, FlatList } from "react-native";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { map } from "lodash";
@@ -69,8 +70,7 @@ const styles = {
     borderRadius: 25
   }
 };
-
-export class SagaDetails extends Component {
+class SagaDetailsComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -89,15 +89,13 @@ export class SagaDetails extends Component {
     };
 
     const {
-      user,
       saga,
       showSummary,
       showAuthor,
       showEpisodes
-    } = this.props.navigation.state.params;
+    } = props.navigation.state.params;
 
     this.state = {
-      user: user || null,
       saga: saga || null,
       showSummary: showSummary === true,
       showAuthor: showAuthor === true,
@@ -148,7 +146,6 @@ export class SagaDetails extends Component {
       renderContent={this.state.error === null ? this.renderContent.bind(this) : this.renderError.bind(this)}
       showNotification={this.state.showNotification}
       currentPage={this.state.saga.title}
-      user={this.state.user}
     />);
   }
 
@@ -186,6 +183,7 @@ export class SagaDetails extends Component {
   }
 
   renderSummary() {
+    this.a = 0; // TO DLT
     return (
       <View>
         <Text>Summary content !</Text>
@@ -194,6 +192,7 @@ export class SagaDetails extends Component {
   }
 
   renderAuthor() {
+    this.a = 0; // TO DLT
     return (
       <View>
         <Text>Author content !</Text>
@@ -210,7 +209,6 @@ export class SagaDetails extends Component {
         <TouchableOpacity
           style={styles.episodesTrackContainer}
           onPress={() => navigate("Player", {
-            user: this.state.user,
             saga: this.state.saga,
             playlist: [
               rowData.item
@@ -246,7 +244,6 @@ export class SagaDetails extends Component {
             <TouchableOpacity
               style={styles.episodesPlayAllButton}
               onPress={() => navigate("Player", {
-                user: this.state.user,
                 playlist: this.state.episodesDataSource
               })}
             >
@@ -273,9 +270,13 @@ export class SagaDetails extends Component {
   }
 }
 
-export default SagaDetails;
-
-SagaDetails.PropTypes = {
+SagaDetailsComponent.PropTypes = {
   navigation: PropTypes.object,
   saga: PropTypes.object
 };
+
+const mapStateToProps = state => state;
+const mapDispatchToProps = dispatch => ({ dispatch });
+
+export const SagaDetails = connect(mapStateToProps, mapDispatchToProps)(SagaDetailsComponent);
+export default SagaDetails;
