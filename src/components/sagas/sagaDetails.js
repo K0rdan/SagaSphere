@@ -129,8 +129,8 @@ class SagaDetailsComponent extends Component {
     if (tracksJson.data) {
       const tracksMaped = [];
 
-      tracksJson.data.forEach((article, i) => {
-        tracksMaped.push(Object.assign(article, { key: i }));
+      tracksJson.data.forEach((track, i) => {
+        tracksMaped.push(Object.assign(track, { key: i }));
       });
 
       this.setState({
@@ -214,7 +214,7 @@ class SagaDetailsComponent extends Component {
             routeParams: {
               saga: this.state.saga,
               playlist: [
-                rowData.item
+                Object.assign({}, rowData.item, { saga: this.state.saga })
               ]
             }
           })}
