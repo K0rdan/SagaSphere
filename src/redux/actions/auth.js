@@ -17,6 +17,13 @@ export const loggingOut = () => ({
   user: null
 });
 
+export const LOGGING_ERROR = "LOGGING_ERROR";
+export const loggingError = error => ({
+  type: LOGGING_ERROR,
+  error,
+  user: null
+});
+
 export const retrieveUser = () => (dispatch) => {
   dispatch(loggingIn());
   return AsyncStorage.getItem("user")
@@ -27,6 +34,12 @@ export const retrieveUser = () => (dispatch) => {
           user: JSON.parse(user)
         });
       }
+    })
+    .catch((error) => {
+      dispatch({
+        type: LOGGING_ERROR,
+        error
+      });
     });
 };
 
@@ -34,6 +47,7 @@ export const AuthActions = {
   LOGGING_IN,
   LOGGING_OUT,
   LOGGED_IN,
+  LOGGING_ERROR,
   retrieveUser
 };
 
