@@ -62,7 +62,7 @@ class SideMenuComponent extends Component {
             if (asyncStorageErr) {
               throw asyncStorageErr;
             }
-            const { dispatch } = this.props.navigation;
+            const { dispatch } = navigation;
             this.setState({ disconnecting: false });
             dispatch({ type: AuthActions.LOGGING_OUT });
             dispatch({ type: "Navigation/NAVIGATE", routeName: "Login" });

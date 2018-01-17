@@ -1,15 +1,13 @@
 import React, { Component } from "react";
 import { Text, Slider, View, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
-import RNFetchBlob from "react-native-fetch-blob";
-import { unzip } from "react-native-zip-archive";
-import Sound from "react-native-sound";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import PropTypes from "prop-types";
 import moment from "moment";
 import Page from "./page";
-import { Error, NotificationLevel, Loader } from "./common";
+import { Error, Loader } from "./common";
 import { Date } from "./../utils";
+import { PlayerActions } from "./../redux/actions/player";
 
 const styles = {
   other: {
@@ -18,6 +16,12 @@ const styles = {
   button: {
     marginLeft: 10,
     marginRight: 10
+  },
+  buttonEnabled: {
+
+  },
+  buttonDisabled: {
+    color: "rgb(200, 200, 200)"
   },
   actionBar: {
     flexDirection: "row",
@@ -33,13 +37,9 @@ class PlayerComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.fetchTrack = this.fetchTrack.bind(this);
-    this.onPlayEnd = this.onPlayEnd.bind(this);
-    this.isPlaying = this.isPlaying.bind(this);
     this.playlistChange = this.playlistChange.bind(this);
 
     const {
-      user,
       saga,
       playlist
     } = this.props.navigation.state.params;
@@ -47,15 +47,6 @@ class PlayerComponent extends Component {
     this.playlist = playlist || null;
 
     this.state = {
-      user: user || null,
-      currentTrack: {
-        number: 0,
-        time: "00:00:00",
-        duration: "00:00:00",
-        isPlaying: false,
-        intervalID: null,
-        details: null
-      },
       loading: false,
       loadingState: null,
       loadingPercent: 0,
@@ -64,139 +55,45 @@ class PlayerComponent extends Component {
     };
   }
 
-  componentWillMount() {
-    this.fetchTrack();
+  // To review
+  componentDidMount() {
+    const { init, fetchTrack, navigation: { state, dispatch } } = this.props;
+    const { playlist } = state.params;
+
+    dispatch(init(playlist));
+    dispatch(fetchTrack(playlist[0]));
   }
 
-  componentWillUnmount() {
-    if (this.state.loading && this.state.fetchingTask) {
-      this.state.fetchingTask.cancel();
-    }
-  }
+  componentWillReceiveProps(nextProps) {
+    const { isLoading, loading: { state, percent } } = nextProps;
 
-  fetchTrack() {
-    const { trackNumber, url } = this.playlist[this.state.currentTrack.number];
-    const sagaPath = `${RNFetchBlob.fs.dirs.MusicDir}/${this.saga.title}/${trackNumber}`;
-
-    if (!RNFetchBlob.fs.exists(`${sagaPath}/donjon-de-naheulbeuk01.mp3`)) {
-      const fetchingTask = RNFetchBlob.fetch("GET", url)
-        .progress({ interval: 100 }, (received, total) => {
-          this.setState({
-            loading: true,
-            loadingState: "Downloading",
-            loadingPercent: Math.floor((received / total) * 100)
-          });
-        })
-        .then((res) => {
-          this.setState({
-            loadingState: "Blobing",
-            loadingPercent: 100
-          });
-          return res.blob();
-        })
-        .then((blob) => {
-          this.setState({
-            loadingState: "Unzipping"
-          });
-          return unzip(blob.getRNFetchBlobRef(), sagaPath);
-        })
-        .then(() => this.loadSound(`${sagaPath}/donjon-de-naheulbeuk01.mp3`))
-        .catch((err) => {
-          this.setState({
-            showNotification: {
-              message: err.message,
-              level: NotificationLevel.err
-            }
-          });
-        });
-
-      this.setState({
-        fetchingTask
-      });
-    }
-    else {
-      this.loadSound(`${sagaPath}/donjon-de-naheulbeuk01.mp3`);
-    }
-  }
-
-  loadSound(path) {
-    const track = new Sound(path, Sound.LIBRARY, (err) => {
-      if (err) {
-        throw err;
-      }
-
-      const { currentTrack } = this.state;
-      const intervalID = setInterval(this.getCurrentTime.bind(this), 100);
-
-      track.play();
-
-      this.setState({
-        loading: false,
-        loadingState: "completed",
-        loadingPercent: 0,
-        currentTrack: Object.assign(currentTrack, {
-          intervalID,
-          isPlaying: true,
-          duration: moment.duration(track.getDuration(), "seconds"),
-          details: track
-        })
-      });
+    this.setState({
+      loading: isLoading,
+      loadingState: state,
+      loadingPercent: percent
     });
   }
 
-  isPlaying() {
-    const { currentTrack } = this.state;
-    if (currentTrack.details) {
-      return new Promise((resolve) => {
-        currentTrack.details.getCurrentTime((seconds, isPlaying) => {
-          resolve(isPlaying);
-        });
-      });
-    }
-
-    return null;
-  }
-
-  getCurrentTime() {
-    const { currentTrack } = this.state;
-    if (currentTrack && currentTrack.details) {
-      currentTrack.details.getCurrentTime((seconds) => {
-        const duration = moment.duration(seconds, "seconds");
-
-        this.setState({
-          currentTrack: Object.assign(currentTrack, {
-            time: Date.timeAsHourMinSec(duration)
-          })
-        });
-
-        // Check if the track is ended
-        const currentTrackDuration = moment.duration(currentTrack.details.getDuration(), "seconds").asMilliseconds();
-        if (Math.abs(currentTrackDuration - duration) < 10) {
-          this.onPlayEnd();
-        }
-      });
-    }
-  }
-
   setCurrentTime(newTime) {
-    const { currentTrack } = this.state;
-    if (currentTrack.details) {
+    const { track: { duration, sound } } = this.props;
+    if (sound) {
       if (newTime < 0) {
         // TODO : playlist previous
         console.log("Playlist previous ?");
-        currentTrack.details.setCurrentTime(0);
+        sound.setCurrentTime(0);
       }
-      else if (newTime >= moment.duration(currentTrack.duration).asSeconds()) {
+      else if (newTime >= moment.duration(duration, "seconds").asSeconds()) {
         // TODO : playlist next
         console.log("Playlist next ?");
-        currentTrack.details.setCurrentTime(0);
+        sound.setCurrentTime(0);
       }
       else {
-        currentTrack.details.setCurrentTime(newTime);
+        sound.setCurrentTime(newTime);
       }
     }
   }
 
+  // To change
   playlistChange(trackNumber) {
     if (trackNumber > 0 && (this.playlist.length - 1) >= trackNumber) {
       this.setState({
@@ -223,30 +120,20 @@ class PlayerComponent extends Component {
     }
   }
 
-  async togglePlay() {
-    const { currentTrack } = this.state;
-    const isPlaying = await this.isPlaying();
+  togglePlay() {
+    const {
+      navigation: { dispatch },
+      track: { isPlaying },
+      play,
+      pause
+    } = this.props;
 
-    if (isPlaying === true) {
-      currentTrack.details.pause();
+    if (isPlaying) {
+      dispatch(pause());
     }
-    else if (isPlaying === false) {
-      currentTrack.details.play();
+    else {
+      dispatch(play());
     }
-    if (isPlaying !== null) {
-      this.setState({
-        currentTrack: Object.assign(currentTrack, {
-          isPlaying: !isPlaying
-        })
-      });
-    }
-  }
-
-  onPlayEnd() {
-    const { currentTrack } = this.state;
-
-    clearInterval(currentTrack.intervalID);
-    this.playlistChange(currentTrack.number + 1);
   }
 
   render() {
@@ -254,7 +141,6 @@ class PlayerComponent extends Component {
       navigation={this.props.navigation}
       renderContent={this.state.error === null ? this.renderContent.bind(this) : this.renderError.bind(this)}
       showNotification={this.state.showNotification}
-      user={this.state.user}
     />);
   }
 
@@ -264,83 +150,85 @@ class PlayerComponent extends Component {
 
   renderContent() {
     const {
+      isLoading,
       loading,
-      loadingState,
-      loadingPercent,
-      currentTrack
-    } = this.state;
-    const currentTime = moment.duration(currentTrack.time).asSeconds();
+      track,
+      playlist
+    } = this.props;
+    const currentTime = moment.duration(track.time, "seconds").asSeconds();
+    const enablePrevButton = track.number > 0;
+    const enableNextButton = (playlist.length - 1) > track.number;
     const loader = (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ fontFamily: "Roboto-Black", fontSize: 12 }}>{loadingState}</Text>
-        <Text style={{ fontFamily: "Roboto-Black", fontSize: 16 }}>{loadingPercent}</Text>
+        <Text style={{ fontFamily: "Roboto-Black", fontSize: 12 }}>{loading.state}</Text>
+        <Text style={{ fontFamily: "Roboto-Black", fontSize: 16 }}>{loading.percent}</Text>
       </View>
     );
-    const renderButton = (size, icon, onPress) => (
-      <TouchableOpacity style={styles.button} onPress={onPress}>
-        <Icon size={size} name={icon} />
-      </TouchableOpacity>
-    );
+    const renderButton = (size, icon, onPress, enable = true) => {
+      const iconStyle = enable ? styles.buttonEnabled : styles.buttonDisabled;
+      return (
+        <TouchableOpacity style={styles.button} onPress={onPress} disabled={!enable}>
+          <Icon size={size} name={icon} style={iconStyle} />
+        </TouchableOpacity>
+      );
+    };
 
     return (
       <View style={{ flex: 1 }}>
         {
-          loading && loadingState && loadingPercent ?
+          isLoading && loading.state && loading.percent ?
             <Loader
-              percent={loadingPercent}
+              percent={loading.percent}
               children={loader}
             /> :
             <View style={{ flex: 1 }}>
               <View style={styles.other}></View>
               <View style={styles.actionBar}>
-                {renderButton(35, "skip-previous", () => this.playlistChange(currentTrack.number - 1))}
+                {renderButton(35, "skip-previous", () => this.playlistChange(track.number - 1), enablePrevButton)}
                 {renderButton(40, "replay-30", () => this.setCurrentTime(currentTime - 30))}
                 {renderButton(
                   55,
-                  `${currentTrack.isPlaying ? "pause" : "play"}-circle-outline`,
+                  `${track.isPlaying ? "pause" : "play"}-circle-outline`,
                   this.togglePlay.bind(this)
                 )}
                 {renderButton(40, "forward-30", () => this.setCurrentTime(currentTime + 30))}
-                {renderButton(35, "skip-next", () => this.playlistChange(currentTrack.number + 1))}
+                {renderButton(35, "skip-next", () => this.playlistChange(track.number + 1), enableNextButton)}
               </View>
-              <View style={styles.playbackBar}>
-                <Text style={{ fontFamily: "Roboto-Black", margin: 10 }}>{currentTrack.time}</Text>
-                <View style={{ flex: 1, justifyContent: "center" }}>
-                  {this.renderSlider()}
-                </View>
-                <Text style={{ fontFamily: "Roboto-Black", margin: 10 }}>{Date.timeAsHourMinSec(currentTrack.duration)}</Text>
-              </View>
+              {this.renderPlaybackBar()}
             </View>
         }
       </View>
     );
   }
 
+  renderPlaybackBar() {
+    const { track } = this.props;
+    return (
+      <View style={styles.playbackBar}>
+        <Text style={{ fontFamily: "Roboto-Black", margin: 10 }}>{track.time || "00:00:00"}</Text>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          {this.renderSlider()}
+        </View>
+        <Text style={{ fontFamily: "Roboto-Black", margin: 10 }}>{Date.timeAsHourMinSec(track.duration) || "00:00:00"}</Text>
+      </View>
+    );
+  }
+
   renderSlider() {
-    const { currentTrack } = this.state;
-    const currentTime = moment.duration(currentTrack.time).asSeconds();
-    const timePercent = (currentTime * 100) / moment.duration(currentTrack.duration).asSeconds();
+    const { track } = this.props;
+    const currentTime = moment.duration(track.time, "seconds").asSeconds();
+    const timePercent = (currentTime * 100) / moment.duration(track.duration, "seconds").asSeconds();
 
     const onSlideStart = () => {
-      if (currentTrack.isPlaying === true) {
+      if (track.isPlaying === true) {
         this.togglePlay();
-        this.setState({
-          currentTrack: Object.assign(currentTrack, {
-            wasPlaying: currentTrack.isPlaying
-          })
-        });
       }
     };
     const onSlideEnd = (value) => {
-      const convertedValue = (value * moment.duration(currentTrack.duration).asSeconds()) / 100;
+      const convertedValue = (value * moment.duration(track.duration, "seconds").asSeconds()) / 100;
       this.setCurrentTime(convertedValue);
-      if (currentTrack.wasPlaying === true) {
+      if (track.isPlaying === false) {
         this.togglePlay();
-        this.setState({
-          currentTrack: Object.assign(currentTrack, {
-            wasPlaying: null
-          })
-        });
       }
     };
 
@@ -355,13 +243,43 @@ class PlayerComponent extends Component {
   }
 }
 
-PlayerComponent.PropTypes = {
-  navigation: PropTypes.object.isRequired,
-  playlist: PropTypes.array.isRequired
+PlayerComponent.defaultProps = {
+  track: {
+    number: 0,
+    isPlaying: false,
+    time: "00:00:00",
+    duration: "00:00:00"
+  }
 };
 
-const mapStateToProps = state => state;
-const mapDispatchToProps = dispatch => ({ dispatch });
+PlayerComponent.PropTypes = {
+  navigation: PropTypes.object.isRequired,
+  playlist: PropTypes.array.isRequired,
+  track: PropTypes.shape({
+    number: PropTypes.number.isRequired,
+    isPlaying: PropTypes.bool.isRequired,
+    time: PropTypes.number.isRequired,
+    duration: PropTypes.number.isRequired
+  }),
+  isLoading: PropTypes.bool.isRequired,
+  loading: PropTypes.shape({
+    state: PropTypes.string.isRequired,
+    percent: PropTypes.number.isRequired
+  })
+};
+
+const mapStateToProps = state => ({
+  playlist: state.PlayerReducer.playlist,
+  track: state.PlayerReducer.track,
+  isLoading: state.PlayerReducer.isLoading,
+  loading: state.PlayerReducer.loading
+});
+const mapDispatchToProps = () => ({
+  init: PlayerActions.init,
+  fetchTrack: PlayerActions.fetchTrack,
+  play: PlayerActions.play,
+  pause: PlayerActions.pause
+});
 
 export const Player = connect(mapStateToProps, mapDispatchToProps)(PlayerComponent);
 export default Player;
