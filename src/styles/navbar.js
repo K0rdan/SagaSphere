@@ -3,6 +3,7 @@ import burgerImageSrc from "./images/icon_burger_menu.png";
 
 export const NavBar = {
   container: styled.View`
+    flex: 0.1;
     width: 100%;
     height: 10%;
     background-color: red;

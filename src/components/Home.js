@@ -217,7 +217,7 @@ class HomeComponent extends Component {
 
   renderContent() {
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <View>
           <Text>TODO : Les dernières sagas</Text>
           { this.state.latestSagas ? this.renderCarousel("latestSagas", this.state.latestSagas) : <Loader /> }

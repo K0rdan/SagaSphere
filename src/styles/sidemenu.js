@@ -2,8 +2,9 @@ import styled from "styled-components/native";
 
 export const SideMenuStyles = {
   container: styled.View`
-    width: 100%;
-    height: 100%;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
     background-color: rgba(0,0,0,0.5);
   `,
   menuLogin: styled.TouchableOpacity`
