@@ -107,12 +107,12 @@ class SideMenuComponent extends Component {
     return (
       <SideMenuStyles.container>
           {this.renderMenu()}
-          {this.renderMenuHeader()}
+          {this.renderMenuFooter()}
       </SideMenuStyles.container>
     );
   }
 
-  renderMenuHeader() {
+  renderMenuFooter() {
     return (
       <View></View>
     );

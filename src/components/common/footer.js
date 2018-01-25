@@ -1,23 +1,29 @@
 // Lib imports
 import React, { Component } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Icon from "react-native-vector-icons/MaterialIcons";
 // Custom imports
-import { NavBar } from "./../../styles/";
 import { PlayerActions } from "./../../redux/actions/index";
 
 const styles = {
+  container: {
+    flex: 0.1,
+    backgroundColor: "red",
+    flexDirection: "row",
+    paddingLeft: "5%",
+    paddingRight: "5%",
+    justifyContent: "space-between"
+  },
   button: {
-    width: "20%",
     height: "100%",
     justifyContent: "center",
     alignItems: "flex-start"
   }
 };
 
-class HeaderComponent extends Component {
+class FooterComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -38,23 +44,42 @@ class HeaderComponent extends Component {
     }
   }
 
+  onPressLibrary() {
+
+  }
+
+  onPressSettings() {
+
+  }
+
   render() {
+    const { orientation } = this.props;
+    const minHeight = orientation === "LANDSCAPE" ? 20 : 0;
+
     return (
-      <NavBar.container>
+      <View style={[styles.container, { minHeight }]}>
         { this.props.drawer ?
-          <NavBar.burgerButton color="transparent" onPress={this.toggleMenu}>
-            <NavBar.burgerImage source={NavBar.burgerImageSrc} style={{ width: 30 }}/>
-          </NavBar.burgerButton> : null }
-        <TouchableOpacity style={styles.button} onPress={this.onPressHome}>
+          <TouchableOpacity style={styles.button} onPress={() => this.toggleMenu()}>
+            <Icon name="menu" color="white" size={40} />
+          </TouchableOpacity> : null }
+        <TouchableOpacity style={styles.button} onPress={() => this.onPressHome()}>
           <Icon name="home" color="white" size={40} />
         </TouchableOpacity>
-        <NavBar.title>{this.props.currentPage}</NavBar.title>
-      </NavBar.container>
+        <TouchableOpacity style={styles.button} onPress={this.onPressLibrary}>
+          <Icon name="play-circle-outline" color="white" size={40} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={this.onPressLibrary}>
+          <Icon name="library-music" color="white" size={40} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={this.onPressSettings}>
+          <Icon name="settings" color="white" size={40} />
+        </TouchableOpacity>
+      </View>
     );
   }
 }
 
-HeaderComponent.proptypes = {
+FooterComponent.proptypes = {
   navigation: PropTypes.object.isRequired,
   drawer: PropTypes.object.isRequired,
   currentPage: PropTypes.string,
@@ -75,5 +100,5 @@ const mapDispatchToPRops = () => ({
   pause: PlayerActions.pause
 });
 
-export const Header = connect(mapStateToProps, mapDispatchToPRops)(HeaderComponent);
-export default Header;
+export const Footer = connect(mapStateToProps, mapDispatchToPRops)(FooterComponent);
+export default Footer;

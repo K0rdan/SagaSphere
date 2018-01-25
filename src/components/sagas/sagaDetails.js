@@ -81,10 +81,7 @@ class SagaDetailsComponent extends Component {
     this.LayoutLinearAnimation = {
       duration: 150,
       create: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
-      update: {
-        type: LayoutAnimation.Types.linear,
-        property: LayoutAnimation.Properties.opacity
-      },
+      update: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
       delete: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity }
     };
 

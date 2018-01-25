@@ -8,12 +8,9 @@ export const NavBar = {
     height: 10%;
     background-color: red;
     flex-direction: row;
-  `,
-  burgerButton: styled.TouchableOpacity`
-    width: 20%;
-    height: 100%;
-    justify-content: center;
-    align-items: flex-start;
+    padding-left: 5%;
+    padding-right: 5%;
+    justify-content: space-between;
   `,
   burgerImage: styled.Image`
     margin-top: 0;
