@@ -185,7 +185,7 @@ class Page extends Component {
   }
 }
 
-Page.PropTypes = {
+Page.propTypes = {
   currentPage: PropTypes.string,
   navigation: PropTypes.object,
   renderContent: PropTypes.func

@@ -7,6 +7,12 @@ import { Loader, NotificationLevel } from "./../common/";
 import { API, Config, Lang } from "./../../utils/";
 import { AuthActions } from "../../redux/actions/index";
 
+const styles = {
+  container: {
+    flex: 1
+  }
+};
+
 class LoginComponent extends Component {
   constructor(props) {
     super(props);
@@ -79,7 +85,7 @@ class LoginComponent extends Component {
     }
 
     return (
-      <View>
+      <View style={styles.container}>
         <Text>{this.title}</Text>
         <TouchableOpacity onPress={this.connect.bind(this)}>
           <Text>Connexion</Text>
@@ -89,7 +95,7 @@ class LoginComponent extends Component {
   }
 }
 
-LoginComponent.PropTypes = {
+LoginComponent.propTypes = {
   navigation: PropTypes.object
 };
 

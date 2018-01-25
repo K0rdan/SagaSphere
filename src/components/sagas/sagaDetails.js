@@ -275,7 +275,7 @@ class SagaDetailsComponent extends Component {
   }
 }
 
-SagaDetailsComponent.PropTypes = {
+SagaDetailsComponent.propTypes = {
   navigation: PropTypes.object,
   saga: PropTypes.object
 };

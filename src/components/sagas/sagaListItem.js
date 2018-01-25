@@ -66,7 +66,7 @@ export class SagaListItem extends Component {
 
 export default SagaListItem;
 
-SagaListItem.PropTypes = {
+SagaListItem.propTypes = {
     navigation: PropTypes.object,
     details: PropTypes.object
 };

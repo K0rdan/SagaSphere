@@ -25,6 +25,7 @@
     "quotes": ["error", "double"],
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
-    "spaced-comment": "off"
+    "spaced-comment": "off",
+    "object-curly-newline": "off"
   }
 }

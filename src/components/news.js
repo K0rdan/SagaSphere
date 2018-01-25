@@ -73,6 +73,6 @@ export default class News extends Component {
     }
 }
 
-News.PropTypes = {
+News.propTypes = {
   navigation: PropTypes.object
 };

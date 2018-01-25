@@ -75,7 +75,7 @@ Notification.defaultProps = {
   level: null
 };
 
-Notification.PropTypes = {
+Notification.propTypes = {
   text: PropTypes.string.isRequired,
   level: PropTypes.oneOf(values(NotificationLevel)).isRequired
 };

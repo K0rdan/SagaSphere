@@ -159,11 +159,15 @@ class SideMenuComponent extends Component {
   }
 }
 
-SideMenuComponent.PropTypes = {
+SideMenuComponent.defaultProps = {
+  user: {}
+};
+
+SideMenuComponent.propTypes = {
   currentPageTitle: PropTypes.string.isRequired,
   navigation: PropTypes.object.isRequired,
   showNotification: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired
+  user: PropTypes.object
 };
 
 const mapStateToProps = state => ({

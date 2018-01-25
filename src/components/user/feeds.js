@@ -9,6 +9,9 @@ import { API, Config, Lang } from "./../../utils/";
 import Page from "./../page";
 
 const styles = {
+  container: {
+    flex: 1
+  },
   feedSectionHeaderContainer: {
     height: 28,
     backgroundColor: "green"
@@ -185,12 +188,14 @@ export class Feeds extends Component {
 
       if (this.state && this.state.dataSource) {
         return (
-          <SectionList
-            renderItem={renderFeedsSectionItem}
-            renderSectionHeader={renderFeedsSectionHeader}
-            sections={this.state.dataSource}
-            stickySectionHeadersEnabled={true}
-          />
+          <View style={styles.container}>
+            <SectionList
+              renderItem={renderFeedsSectionItem}
+              renderSectionHeader={renderFeedsSectionHeader}
+              sections={this.state.dataSource}
+              stickySectionHeadersEnabled={true}
+            />
+          </View>
         );
       }
 
@@ -246,7 +251,7 @@ export class Feeds extends Component {
     }
 }
 
-Feeds.PropTypes = {
+Feeds.propTypes = {
   navigation: PropTypes.object
 };
 

@@ -252,7 +252,7 @@ PlayerComponent.defaultProps = {
   }
 };
 
-PlayerComponent.PropTypes = {
+PlayerComponent.propTypes = {
   navigation: PropTypes.object.isRequired,
   playlist: PropTypes.array.isRequired,
   track: PropTypes.shape({

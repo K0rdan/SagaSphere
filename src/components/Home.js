@@ -340,10 +340,15 @@ class HomeComponent extends Component {
   }
 }
 
-HomeComponent.PropTypes = {
+HomeComponent.defaultProps = {
+  isLoggedIn: false,
+  user: {}
+};
+
+HomeComponent.propTypes = {
   navigation: PropTypes.object.isRequired,
-  isLoggedIn: PropTypes.bool.isRequired,
-  user: PropTypes.object.isRequired
+  isLoggedIn: PropTypes.bool,
+  user: PropTypes.object
 };
 
 const mapStateToProps = state => ({

@@ -92,7 +92,7 @@ export class SagaList extends Component {
     }
 }
 
-SagaList.PropTypes = {
+SagaList.propTypes = {
   navigation: PropTypes.object
 };
 
