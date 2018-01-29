@@ -1,12 +1,24 @@
+// Lib imports
 import React, { Component } from "react";
-import { Text, View, TouchableOpacity, UIManager, Platform, LayoutAnimation, FlatList } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  UIManager,
+  Platform,
+  LayoutAnimation,
+  FlatList
+} from "react-native";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { map } from "lodash";
 import moment from "moment";
-import Page from "./../page";
-import { Error, NotificationLevel, Loader } from "./../common";
+// Project imports
+import { NotificationActions } from "./../../redux/actions/";
+import { NotificationLevel } from "./../../redux/constants/";
+import { Page } from "./../page";
+import { Error, Loader } from "./../common";
 import { API, Config, Lang } from "./../../utils/";
 
 const styles = {
@@ -46,12 +58,12 @@ const styles = {
     textAlignVertical: "center"
   },
   episodesTrackDuration: {
-    flex: 0.20,
+    flex: 0.2,
     textAlign: "center",
     textAlignVertical: "center"
   },
   episodesTrackPlayButton: {
-    flex: 0.10,
+    flex: 0.1,
     textAlign: "center",
     textAlignVertical: "center"
   },
@@ -74,15 +86,27 @@ class SagaDetailsComponent extends Component {
   constructor(props) {
     super(props);
 
-    if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+    if (
+      Platform.OS === "android" &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
 
     this.LayoutLinearAnimation = {
       duration: 150,
-      create: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
-      update: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
-      delete: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity }
+      create: {
+        type: LayoutAnimation.Types.linear,
+        property: LayoutAnimation.Properties.opacity
+      },
+      update: {
+        type: LayoutAnimation.Types.linear,
+        property: LayoutAnimation.Properties.opacity
+      },
+      delete: {
+        type: LayoutAnimation.Types.linear,
+        property: LayoutAnimation.Properties.opacity
+      }
     };
 
     const {
@@ -109,45 +133,44 @@ class SagaDetailsComponent extends Component {
   }
 
   fetchEpisodes() {
+    const { showNotification } = this.props;
     return API(Config.EndPoints.saga.episodes(this.state.saga.id))
       .then(this.formatEpisodes.bind(this))
-      .catch((err) => {
-        this.setState({
-          showNotification: {
-            message: err.message,
-            level: NotificationLevel.err
-          }
-        });
-      });
+      .catch(err => showNotification(err.message, NotificationLevel.err));
   }
 
-  formatEpisodes(tracksJson) {
+  formatEpisodes({ data }) {
     // Did we get tracks ?
-    if (tracksJson.data) {
+    if (data) {
       const tracksMaped = [];
 
-      tracksJson.data.forEach((track, i) => {
+      data.forEach((track, i) => {
         tracksMaped.push(Object.assign(track, { key: i }));
       });
 
       this.setState({
-        episodes: tracksJson.data,
+        episodes: data,
         episodesDataSource: tracksMaped
       });
     }
   }
 
   render() {
-    return (<Page
-      navigation={this.props.navigation}
-      renderContent={this.state.error === null ? this.renderContent.bind(this) : this.renderError.bind(this)}
-      showNotification={this.state.showNotification}
-      currentPage={this.state.saga.title}
-    />);
+    return (
+      <Page
+        navigation={this.props.navigation}
+        renderContent={
+          this.state.error === null
+            ? this.renderContent.bind(this)
+            : this.renderError.bind(this)
+        }
+        currentPage={this.state.saga.title}
+      />
+    );
   }
 
   renderError() {
-    return (<Error details={this.state.error} />);
+    return <Error details={this.state.error} />;
   }
 
   renderContent() {
@@ -155,7 +178,10 @@ class SagaDetailsComponent extends Component {
       <View style={styles.container}>
         <Text>{this.state.saga.title}</Text>
         {map(["Summary", "Author", "Episodes"], sectionName =>
-          this.renderSections(sectionName, this[`render${sectionName}`].bind(this)))}
+          this.renderSections(
+            sectionName,
+            this[`render${sectionName}`].bind(this)
+          ))}
       </View>
     );
   }
@@ -167,14 +193,20 @@ class SagaDetailsComponent extends Component {
           style={styles.sectionHeader}
           onPress={() => this.toggleSection(sectionName)}
         >
-          <Text style={styles.sectionHeaderTitle}>{Lang[Config.Lang].Miscellaneous[sectionName]}</Text>
+          <Text style={styles.sectionHeaderTitle}>
+            {Lang[Config.Lang].Miscellaneous[sectionName]}
+          </Text>
           <Icon
-            name={this.state[`show${sectionName}`] ? "arrow-drop-down" : "arrow-drop-up"}
+            name={
+              this.state[`show${sectionName}`]
+                ? "arrow-drop-down"
+                : "arrow-drop-up"
+            }
             size={36}
             style={styles.sectionHeaderArrow}
           />
         </TouchableOpacity>
-        { this.state[`show${sectionName}`] ? renderContent() : null }
+        {this.state[`show${sectionName}`] ? renderContent() : null}
       </View>
     );
   }
@@ -200,25 +232,37 @@ class SagaDetailsComponent extends Component {
   renderEpisodes() {
     const { dispatch } = this.props.navigation;
 
-    const renderRow = (rowData) => {
-      const duration = moment.duration(rowData.item.duration, "seconds");
+    const renderRow = ({ item }) => {
+      const duration = moment.duration(item.duration, "seconds");
       return (
         <TouchableOpacity
           style={styles.episodesTrackContainer}
-          onPress={() => dispatch({
-            type: "Navigation/NAVIGATE",
-            routeName: "Player",
-            routeParams: {
-              saga: this.state.saga,
-              playlist: [
-                Object.assign({}, rowData.item, { saga: this.state.saga })
-              ]
-            }
-          })}
+          onPress={() =>
+            dispatch({
+              type: "Navigation/NAVIGATE",
+              routeName: "Player",
+              routeParams: {
+                saga: this.state.saga,
+                playlist: [Object.assign({}, item, { saga: this.state.saga })]
+              }
+            })
+          }
         >
-          <Text style={styles.episodesTrackNum}>{rowData.item.trackNumber}</Text>
-          <Text style={styles.episodesTrackTitle}>{rowData.item.name}</Text>
-          <Text style={styles.episodesTrackDuration}>{`${duration.hours() > 0 ? `${duration.hours()}${Lang[Config.Lang].Units.HourShort} ` : ""}${duration.minutes() > 0 ? `${duration.minutes()}${Lang[Config.Lang].Units.MinuteShort} ` : ""}${duration.seconds() > 0 ? `${duration.seconds()}${Lang[Config.Lang].Units.SecondShort}` : ""}`}</Text>
+          <Text style={styles.episodesTrackNum}>{item.trackNumber}</Text>
+          <Text style={styles.episodesTrackTitle}>{item.name}</Text>
+          <Text style={styles.episodesTrackDuration}>{`${
+            duration.hours() > 0
+              ? `${duration.hours()}${Lang[Config.Lang].Units.HourShort} `
+              : ""
+          }${
+            duration.minutes() > 0
+              ? `${duration.minutes()}${Lang[Config.Lang].Units.MinuteShort} `
+              : ""
+          }${
+            duration.seconds() > 0
+              ? `${duration.seconds()}${Lang[Config.Lang].Units.SecondShort}`
+              : ""
+          }`}</Text>
           <Icon
             name={"play-arrow"}
             size={36}
@@ -244,13 +288,15 @@ class SagaDetailsComponent extends Component {
           <View style={styles.episodesPlayAll}>
             <TouchableOpacity
               style={styles.episodesPlayAllButton}
-              onPress={() => dispatch({
-                type: "Navigation/NAVIGATE",
-                routeName: "Player",
-                routeParams: {
-                  playlist: this.state.episodesDataSource
-                }
-              })}
+              onPress={() =>
+                dispatch({
+                  type: "Navigation/NAVIGATE",
+                  routeName: "Player",
+                  routeParams: {
+                    playlist: this.state.episodesDataSource
+                  }
+                })
+              }
             >
               <Text style={{ textAlignVertical: "center" }}>Tout écouter</Text>
               <Icon
@@ -261,7 +307,7 @@ class SagaDetailsComponent extends Component {
             </TouchableOpacity>
           </View>
         </View>
-        );
+      );
     }
 
     return <Loader />;
@@ -275,13 +321,23 @@ class SagaDetailsComponent extends Component {
   }
 }
 
+SagaDetailsComponent.defaultProps = {
+  navigation: {},
+  saga: {},
+  showNotification: () => {}
+};
+
 SagaDetailsComponent.propTypes = {
   navigation: PropTypes.object,
-  saga: PropTypes.object
+  saga: PropTypes.object,
+  showNotification: PropTypes.func
 };
 
 const mapStateToProps = state => state;
-const mapDispatchToProps = dispatch => ({ dispatch });
+const mapDispatchToProps = dispatch => ({
+  showNotification: (message, level) =>
+    dispatch(NotificationActions.showNotification(message, level))
+});
 
 export const SagaDetails = connect(mapStateToProps, mapDispatchToProps)(SagaDetailsComponent);
 export default SagaDetails;

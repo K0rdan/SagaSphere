@@ -1,23 +1,47 @@
+// Lib imports
 import React, { Component } from "react";
-import { AppState, DrawerLayoutAndroid, View, Platform, UIManager, LayoutAnimation } from "react-native";
+import {
+  AppState,
+  DrawerLayoutAndroid,
+  View,
+  Platform,
+  UIManager,
+  LayoutAnimation
+} from "react-native";
 import Orientation from "react-native-orientation";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { values } from "lodash";
+// Project imports
+import { NotificationLevel } from "./../redux/constants/";
 import { Config } from "./../utils/index";
-import { Footer, Loader, Notification, NotificationLevel, SideMenu } from "./common/index";
+import { Footer, Loader, Notification, SideMenu } from "./common/index";
 
-class Page extends Component {
+class PageComponent extends Component {
   constructor(props) {
     super(props);
 
-    if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+    if (
+      Platform.OS === "android" &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
 
     this.LayoutLinearAnimation = {
       duration: 300,
-      create: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
-      update: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity },
-      delete: { type: LayoutAnimation.Types.linear, property: LayoutAnimation.Properties.opacity }
+      create: {
+        type: LayoutAnimation.Types.linear,
+        property: LayoutAnimation.Properties.opacity
+      },
+      update: {
+        type: LayoutAnimation.Types.linear,
+        property: LayoutAnimation.Properties.opacity
+      },
+      delete: {
+        type: LayoutAnimation.Types.linear,
+        property: LayoutAnimation.Properties.opacity
+      }
     };
 
     const { currentPage } = this.props;
@@ -41,64 +65,81 @@ class Page extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-      const { showNotification } = nextProps;
+    console.log("Page, componentWillReceiveProps, nextProps :", nextProps);
+    const { notificationMessage, notificationLevel } = nextProps;
 
-      if (showNotification && showNotification.message && showNotification.level) {
-          this.showNotification(showNotification.message, showNotification.level);
-      }
+    if (notificationMessage && notificationLevel) {
+      this.showNotification(notificationMessage, notificationLevel);
+    }
   }
 
   componentWillMount() {
-      Orientation.getOrientation((err, orientation) => {
-          if (err) {
-              this.showNotification(err, NotificationLevel.err);
-          }
-          this.setState({ orientation });
-      });
+    Orientation.getOrientation((err, orientation) => {
+      if (err) {
+        this.showNotification(err, NotificationLevel.err);
+      }
+      this.setState({ orientation });
+    });
   }
 
   componentDidMount() {
-      AppState.addEventListener("change", this.appStateDidChange);
-      Orientation.addOrientationListener(this.orientationDidChange);
+    AppState.addEventListener("change", this.appStateDidChange);
+    Orientation.addOrientationListener(this.orientationDidChange);
   }
 
   componentWillUnmount() {
-      AppState.removeEventListener("change", this.appStateDidChange);
-      Orientation.removeOrientationListener(this.orientationDidChange);
+    AppState.removeEventListener("change", this.appStateDidChange);
+    Orientation.removeOrientationListener(this.orientationDidChange);
   }
 
   appStateDidChange(appState) {
-      // Active -> Inactive / Background
-      if (this.state && this.state.appState && this.state.appState === "active" && (appState === "inactive" || appState === "background")) {
-          // Force PORTRAIT mode when inactive / background
-          Orientation.lockToPortrait();
-          this.setState({ orientation: "PORTRAIT" });
-      }
+    // Active -> Inactive / Background
+    if (
+      this.state &&
+      this.state.appState &&
+      this.state.appState === "active" &&
+      (appState === "inactive" || appState === "background")
+    ) {
+      // Force PORTRAIT mode when inactive / background
+      Orientation.lockToPortrait();
+      this.setState({ orientation: "PORTRAIT" });
+    }
+ else if (
+      this.state &&
+      this.state.appState &&
+      appState &&
+      appState === "active" &&
+      (this.state.appState === "inactive" ||
+        this.state.appState === "background")
+    ) {
       // Inactive / Background -> Active
-      else if (this.state && this.state.appState && appState && appState === "active" && (this.state.appState === "inactive" || this.state.appState === "background")) {
-          Orientation.unlockAllOrientations();
-      }
+      Orientation.unlockAllOrientations();
+    }
 
-      this.setState({ appState });
+    this.setState({ appState });
   }
 
   orientationDidChange(orientation) {
-      if (orientation === "PORTRAIT") {
-          // Do something on rotation to PORTRAIT
-          this.setState({ orientation });
-      }
-      else if (orientation === "LANDSCAPE") {
-          // Do something on rotation to LANDSCAPE
-          this.setState({ orientation });
-      }
+    if (orientation === "PORTRAIT") {
+      // Do something on rotation to PORTRAIT
+      this.setState({ orientation });
+    }
+ else if (orientation === "LANDSCAPE") {
+      // Do something on rotation to LANDSCAPE
+      this.setState({ orientation });
+    }
   }
 
   toggleDrawer() {
-      this.refs.drawer.openDrawer();
+    this.refs.drawer.openDrawer();
   }
 
   showNotification(notificationMessage, notificationLevel) {
-    if (notificationMessage && notificationMessage !== "" && notificationLevel) {
+    if (
+      notificationMessage &&
+      notificationMessage !== "" &&
+      notificationLevel
+    ) {
       if (this.refs.drawer) {
         this.refs.drawer.closeDrawer();
       }
@@ -107,22 +148,37 @@ class Page extends Component {
         LayoutAnimation.configureNext(this.LayoutLinearAnimation);
       });
       setTimeout(() => {
-        this.setState({ notificationMessage: "", notificationLevel: null }, () => {
-          LayoutAnimation.configureNext(this.LayoutLinearAnimation);
-        });
+        this.setState(
+          { notificationMessage: "", notificationLevel: null },
+          () => {
+            LayoutAnimation.configureNext(this.LayoutLinearAnimation);
+          }
+        );
       }, Config.NotificationDuration);
     }
   }
 
   render() {
-      if (this.state && this.state.orientation && this.state.orientation === "PORTRAIT") {
-          return this.renderPortrait();
-      }
-      else if (this.state && this.state.orientation && this.state.orientation === "LANDSCAPE") {
-          return this.renderLandscape();
-      }
+    if (
+      this.state &&
+      this.state.orientation &&
+      this.state.orientation === "PORTRAIT"
+    ) {
+      return this.renderPortrait();
+    }
+ else if (
+      this.state &&
+      this.state.orientation &&
+      this.state.orientation === "LANDSCAPE"
+    ) {
+      return this.renderLandscape();
+    }
 
-      return (<View><Loader /></View>);
+    return (
+      <View>
+        <Loader />
+      </View>
+    );
   }
 
   renderPortrait() {
@@ -136,7 +192,8 @@ class Page extends Component {
           ref="drawer"
           drawerWidth={200}
           drawerPosition={DrawerLayoutAndroid.positions.Left}
-          renderNavigationView={this.renderNavigationView}>
+          renderNavigationView={this.renderNavigationView}
+        >
           {renderContent != null ? renderContent() : null}
           <Footer
             orientation={orientation}
@@ -144,9 +201,13 @@ class Page extends Component {
             currentPage={currentPage}
             drawer={drawer}
           />
-          {this.state.notificationMessage !== "" && this.state.notificationLevel !== null ?
-            <Notification text={this.state.notificationMessage} level={this.state.notificationLevel}/> :
-            null}
+          {this.props.notificationMessage !== "" &&
+          this.props.notificationLevel !== null ? (
+            <Notification
+              text={this.props.notificationMessage}
+              level={this.props.notificationLevel}
+            />
+          ) : null}
         </DrawerLayoutAndroid>
       </View>
     );
@@ -155,12 +216,10 @@ class Page extends Component {
   renderLandscape() {
     const { currentPage, renderContent, navigation } = this.props;
     const { orientation } = this.state;
-
+    console.log(this.props);
     return (
       <View style={{ flex: 1, flexDirection: "row" }}>
-        <View style={{ width: 200 }}>
-          {this.renderNavigationView()}
-        </View>
+        <View style={{ width: 200 }}>{this.renderNavigationView()}</View>
         <View style={{ flex: 1, flexDirection: "column" }}>
           {renderContent != null ? renderContent() : null}
           <Footer
@@ -168,27 +227,46 @@ class Page extends Component {
             navigation={navigation}
             currentPage={currentPage}
           />
-          {this.state.notificationMessage !== "" && this.state.notificationLevel !== null ?
-            <Notification text={this.state.notificationMessage} level={this.state.notificationLevel}/> :
-            null}
+          {this.props.notificationMessage !== "" &&
+          this.props.notificationLevel !== null ? (
+            <Notification
+              text={this.state.notificationMessage}
+              level={this.state.notificationLevel}
+            />
+          ) : null}
         </View>
       </View>
     );
   }
 
   renderNavigationView() {
-      return (<SideMenu
-          navigation={this.props.navigation}
-          currentPageTitle={this.title}
-          showNotification={this.showNotification}
-      />);
+    return (
+      <SideMenu
+        navigation={this.props.navigation}
+        currentPageTitle={this.title}
+      />
+    );
   }
 }
 
-Page.propTypes = {
-  currentPage: PropTypes.string,
-  navigation: PropTypes.object,
-  renderContent: PropTypes.func
+PageComponent.defaultProps = {
+  notificationMessage: "",
+  notificationLevel: null
 };
 
+PageComponent.propTypes = {
+  currentPage: PropTypes.string,
+  navigation: PropTypes.object,
+  renderContent: PropTypes.func,
+  notificationMessage: PropTypes.string,
+  notificationLevel: PropTypes.oneOf(values(NotificationLevel))
+};
+
+const mapStateToProps = state => ({
+  notificationMessage: state.NotificationReducer.message,
+  notificationLevel: state.NotificationReducer.level
+});
+const mapDispatchToProps = dispatch => ({ dispatch });
+
+export const Page = connect(mapStateToProps, mapDispatchToProps)(PageComponent);
 export default Page;

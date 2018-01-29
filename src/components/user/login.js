@@ -1,11 +1,14 @@
+// Lib imports
 import React, { Component } from "react";
 import { AsyncStorage, Text, View, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import Page from "./../page";
-import { Loader, NotificationLevel } from "./../common/";
+// Project imports
+import { AuthActions, NotificationActions } from "./../../redux/actions/";
+import { NotificationLevel } from "./../../redux/constants/";
+import { Page } from "./../page";
+import { Loader } from "./../common/";
 import { API, Config, Lang } from "./../../utils/";
-import { AuthActions } from "../../redux/actions/index";
 
 const styles = {
   container: {
@@ -21,13 +24,13 @@ class LoginComponent extends Component {
 
     this.state = {
       user: null,
-      connecting: false,
-      showNotification: null
+      connecting: false
     };
   }
 
   connect() {
     if (this.state.connecting !== true) {
+      const { showNotification, navigation: { dispatch } } = this.props;
       const loginHeaders = {
         headers: {
           Accept: "application/json",
@@ -43,7 +46,6 @@ class LoginComponent extends Component {
       API(Config.EndPoints.login, loginHeaders)
         .then(async (jsonObj) => {
           try {
-            const { dispatch } = this.props.navigation;
             await AsyncStorage.setItem("user", JSON.stringify(jsonObj.data));
             this.setState({
               user: jsonObj,
@@ -52,18 +54,15 @@ class LoginComponent extends Component {
             dispatch({ type: AuthActions.LOGGED_IN, user: jsonObj });
             dispatch({ type: "Navigation/NAVIGATE", routeName: "Home" });
           }
-          catch (err) {
+ catch (err) {
             throw err;
           }
         })
         .catch((err) => {
           this.setState({
-            connecting: false,
-            showNotification: {
-              message: err.message,
-              level: NotificationLevel.err
-            }
+            connecting: false
           });
+          showNotification(err.message, NotificationLevel.err);
         });
 
       this.setState({ connecting: true });
@@ -71,12 +70,13 @@ class LoginComponent extends Component {
   }
 
   render() {
-    return (<Page
-      navigation={this.props.navigation}
-      renderContent={this.renderContent.bind(this)}
-      showNotification={this.state.showNotification}
-      currentPage={this.title}
-    />);
+    return (
+      <Page
+        navigation={this.props.navigation}
+        renderContent={this.renderContent.bind(this)}
+        currentPage={this.title}
+      />
+    );
   }
 
   renderContent() {
@@ -95,8 +95,18 @@ class LoginComponent extends Component {
   }
 }
 
+LoginComponent.defaultProps = {
+  navigation: {},
+  isLoggedIn: false,
+  user: null,
+  showNotification: () => {}
+};
+
 LoginComponent.propTypes = {
-  navigation: PropTypes.object
+  navigation: PropTypes.object,
+  isLoggedIn: PropTypes.bool,
+  user: PropTypes.object,
+  showNotification: PropTypes.func
 };
 
 const mapStateToProps = state => ({
@@ -104,7 +114,10 @@ const mapStateToProps = state => ({
   user: state.AuthReducer.user
 });
 
-const mapDispatchToProps = dispatch => ({ dispatch });
+const mapDispatchToProps = dispatch => ({
+  showNotification: (message, level) =>
+    dispatch(NotificationActions.showNotification(message, level))
+});
 
 export const Login = connect(mapStateToProps, mapDispatchToProps)(LoginComponent);
 export default Login;

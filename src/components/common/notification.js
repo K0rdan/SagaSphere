@@ -4,6 +4,8 @@ import { Text, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import PropTypes from "prop-types";
 import { values } from "lodash";
+// Custom imports
+import { NotificationLevel } from "./../../redux/constants/";
 
 const styles = {
   container: {
@@ -26,12 +28,6 @@ const styles = {
   text: {
     flex: 0.85
   }
-};
-
-export const NotificationLevel = {
-  info: "green",
-  warn: "orange",
-  err: "red"
 };
 
 export class Notification extends Component {
@@ -68,7 +64,6 @@ export class Notification extends Component {
     return null;
   }
 }
-
 
 Notification.defaultProps = {
   text: "",

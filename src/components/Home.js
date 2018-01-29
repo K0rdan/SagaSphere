@@ -1,3 +1,4 @@
+// Lib imports
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Text, View, AppState, TouchableOpacity } from "react-native";
@@ -6,10 +7,12 @@ import { map } from "lodash";
 import Orientation from "react-native-orientation";
 import Carousel from "react-native-snap-carousel";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import Page from "./page";
+// Custom imports
+import { Page } from "./page";
 import { API, Config, Lang } from "./../utils/";
-import { Loader, NotificationLevel, Error } from "./common/";
-import { AuthActions } from "../redux/actions/index";
+import { Loader, Error } from "./common/";
+import { NotificationActions, AuthActions } from "./../redux/actions/";
+import { NotificationLevel } from "./../redux/constants/";
 
 const styles = {
   horizontalSeparator: {
@@ -92,25 +95,19 @@ class HomeComponent extends Component {
         left: false,
         right: false
       },
-      orientation: null,
-      showNotification: null,
-      error: null
+      orientation: null
     };
   }
 
   componentWillMount() {
-    const { dispatch } = this.props;
-    dispatch(AuthActions.retrieveUser());
+    const { retrieveUser, showNotification } = this.props;
+
+    retrieveUser();
     this.fetchData();
 
     Orientation.getOrientation((err, orientation) => {
       if (err) {
-        this.setState({
-          showNotification: {
-            message: err,
-            level: NotificationLevel.err
-          }
-        });
+        showNotification(err, NotificationLevel.err);
       }
       this.setState({ orientation });
     });
@@ -131,7 +128,7 @@ class HomeComponent extends Component {
       // Do something on rotation to PORTRAIT
       this.setState({ orientation });
     }
-    else if (orientation === "LANDSCAPE") {
+ else if (orientation === "LANDSCAPE") {
       // Do something on rotation to LANDSCAPE
       this.setState({ orientation });
     }
@@ -143,13 +140,25 @@ class HomeComponent extends Component {
 
   appStateDidChange(appState) {
     // Active -> Inactive / Background
-    if (this.state && this.state.appState && this.state.appState === "active" && (appState === "inactive" || appState === "background")) {
+    if (
+      this.state &&
+      this.state.appState &&
+      this.state.appState === "active" &&
+      (appState === "inactive" || appState === "background")
+    ) {
       // Force PORTRAIT mode when inactive / background
       Orientation.lockToPortrait();
       this.setState({ orientation: "PORTRAIT" });
     }
-    // Inactive / Background -> Active
-    else if (this.state && this.state.appState && appState && appState === "active" && (this.state.appState === "inactive" || this.state.appState === "background")) {
+ else if (
+      this.state &&
+      this.state.appState &&
+      appState &&
+      appState === "active" &&
+      (this.state.appState === "inactive" ||
+        this.state.appState === "background")
+    ) {
+      // Inactive / Background -> Active
       Orientation.unlockAllOrientations();
     }
 
@@ -157,24 +166,27 @@ class HomeComponent extends Component {
   }
 
   fetchData() {
+    const { showNotification } = this.props;
     return Promise.all([
-      API(Config.EndPoints.saga.latest)
-        .then(jsonRes => ({ dataType: "latestSagas", data: jsonRes.data })),
-      API(Config.EndPoints.episodes.latest)
-        .then(jsonRes => ({ dataType: "latestEpisodes", data: jsonRes.data })),
-      API(Config.EndPoints.news)
-        .then(jsonRes => ({ dataType: "news", data: jsonRes.data }))
+      API(Config.EndPoints.saga.latest).then(jsonRes => ({
+        dataType: "latestSagas",
+        data: jsonRes.data
+      })),
+      API(Config.EndPoints.episodes.latest).then(jsonRes => ({
+        dataType: "latestEpisodes",
+        data: jsonRes.data
+      })),
+      API(Config.EndPoints.news).then(jsonRes => ({
+        dataType: "news",
+        data: jsonRes.data
+      }))
     ])
       .then(this.formatData)
-      .catch((error) => {
-        this.setState({
-          showNotification: {
-            message: `One of the end point did not respond properly : '${error.message}'.`,
-            level: NotificationLevel.err
-          },
-          error
-        });
-      });
+      .catch(error =>
+        showNotification(
+          `One of the end point did not respond properly : '${error.message}'.`,
+          NotificationLevel.err
+        ));
   }
 
   formatData(fetchesRes) {
@@ -192,24 +204,27 @@ class HomeComponent extends Component {
     });
 
     this.setState(Object.assign({}, state, {
-      latestSagasArrows: {
-        right: state.latestSagas.length > 1
-      },
-      latestEpisodesArrows: {
-        right: state.latestEpisodes.length > 1
-      },
-      newsArrows: {
-        right: state.news.length > 1
-      }
-    }));
+        latestSagasArrows: {
+          right: state.latestSagas.length > 1
+        },
+        latestEpisodesArrows: {
+          right: state.latestEpisodes.length > 1
+        },
+        newsArrows: {
+          right: state.news.length > 1
+        }
+      }));
   }
 
   render() {
     return (
       <Page
         navigation={this.props.navigation}
-        renderContent={this.state.error === null ? this.renderContent.bind(this) : this.renderError.bind(this)}
-        showNotification={this.state.showNotification}
+        renderContent={
+          this.state.error === null
+            ? this.renderContent.bind(this)
+            : this.renderError.bind(this)
+        }
         currentPage={Lang[Config.Lang].Menu.News}
       />
     );
@@ -220,24 +235,36 @@ class HomeComponent extends Component {
       <View style={{ flex: 1 }}>
         <View>
           <Text>TODO : Les dernières sagas</Text>
-          { this.state.latestSagas ? this.renderCarousel("latestSagas", this.state.latestSagas) : <Loader /> }
+          {this.state.latestSagas ? (
+            this.renderCarousel("latestSagas", this.state.latestSagas)
+          ) : (
+            <Loader />
+          )}
         </View>
         <View style={styles.horizontalSeparator} />
         <View>
           <Text>TODO : Les derniers épisodes</Text>
-          { this.state.latestEpisodes ? this.renderCarousel("latestEpisodes", this.state.latestEpisodes) : <Loader /> }
+          {this.state.latestEpisodes ? (
+            this.renderCarousel("latestEpisodes", this.state.latestEpisodes)
+          ) : (
+            <Loader />
+          )}
         </View>
         <View style={styles.horizontalSeparator} />
         <View>
           <Text>Messages des créateurs</Text>
-          { this.state.news ? this.renderCarousel("news", this.state.news) : <Loader /> }
+          {this.state.news ? (
+            this.renderCarousel("news", this.state.news)
+          ) : (
+            <Loader />
+          )}
         </View>
       </View>
     );
   }
 
   renderError() {
-    return (<Error details={this.state.error} />);
+    return <Error details={this.state.error} />;
   }
 
   renderCarousel(type, data) {
@@ -262,11 +289,11 @@ class HomeComponent extends Component {
 
       if (this.state[`${type}Arrows`][direction]) {
         return (
-          <TouchableOpacity style={containerStyle} onPress={this.onArrowPush.bind(this, type, direction)}>
-            <Icon
-              name={`chevron-${direction}`}
-              size={24}
-            />
+          <TouchableOpacity
+            style={containerStyle}
+            onPress={this.onArrowPush.bind(this, type, direction)}
+          >
+            <Icon name={`chevron-${direction}`} size={24} />
           </TouchableOpacity>
         );
       }
@@ -276,7 +303,7 @@ class HomeComponent extends Component {
 
     return (
       <View>
-        { renderListItemArrow("left") }
+        {renderListItemArrow("left")}
         <Carousel
           ref={(c) => {
             this.carousels[type] = c;
@@ -291,7 +318,7 @@ class HomeComponent extends Component {
           // Event handlers
           onSnapToItem={this.updateCarouselArrows.bind(this, type)}
         />
-        { renderListItemArrow("right") }
+        {renderListItemArrow("right")}
       </View>
     );
   }
@@ -309,7 +336,10 @@ class HomeComponent extends Component {
           }
         });
       }
-      else if (currentIndex >= 0 && currentIndex < (this.state[carousel].length - 1)) {
+ else if (
+        currentIndex >= 0 &&
+        currentIndex < this.state[carousel].length - 1
+      ) {
         // Middle item case -> Show left and right arrow
         this.setState({
           [`${carousel}Arrows`]: {
@@ -318,7 +348,7 @@ class HomeComponent extends Component {
           }
         });
       }
-      else {
+ else {
         // Last item case -> Show left arrow
         this.setState({
           [`${carousel}Arrows`]: {
@@ -334,7 +364,7 @@ class HomeComponent extends Component {
     if (direction === "right") {
       this.carousels[carousel].snapToNext();
     }
-    else if (direction === "left") {
+ else if (direction === "left") {
       this.carousels[carousel].snapToPrev();
     }
   }
@@ -342,13 +372,17 @@ class HomeComponent extends Component {
 
 HomeComponent.defaultProps = {
   isLoggedIn: false,
-  user: {}
+  user: {},
+  showNotification: () => {},
+  retrieveUser: () => {}
 };
 
 HomeComponent.propTypes = {
   navigation: PropTypes.object.isRequired,
   isLoggedIn: PropTypes.bool,
-  user: PropTypes.object
+  user: PropTypes.object,
+  showNotification: PropTypes.func,
+  retrieveUser: PropTypes.func
 };
 
 const mapStateToProps = state => ({
@@ -356,7 +390,11 @@ const mapStateToProps = state => ({
   user: state.AuthReducer.user
 });
 
-const mapDispatchToProps = dispatch => ({ dispatch });
+const mapDispatchToProps = dispatch => ({
+  showNotification: (message, level) =>
+    dispatch(NotificationActions.showNotification(message, level)),
+  retrieveUser: () => dispatch(AuthActions.retrieveUser())
+});
 
 export const Home = connect(mapStateToProps, mapDispatchToProps)(HomeComponent);
 export default Home;

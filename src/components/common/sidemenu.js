@@ -1,11 +1,14 @@
+// Lib imports
 import React, { Component } from "react";
 import { AsyncStorage, ListView, Text, View } from "react-native";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Loader, NotificationLevel } from "./index";
+// Project imports
+import { Loader } from "./index";
 import { API, Config, Lang } from "./../../utils/";
-import { AuthActions } from "./../../redux/actions/index";
-
+import { AuthActions, NotificationActions } from "./../../redux/actions/";
+import { NotificationLevel } from "./../../redux/constants/";
+// Styles imports
 import { SideMenuStyles } from "./../../styles/";
 
 class SideMenuComponent extends Component {
@@ -48,8 +51,8 @@ class SideMenuComponent extends Component {
   }
 
   async menuLogoutOnPress() {
+    const { navigation, showNotification } = this.props;
     try {
-      const { navigation } = this.props;
       this.setState({
         user: null,
         disconnecting: true
@@ -77,11 +80,11 @@ class SideMenuComponent extends Component {
               navigation.navigate("Login");
             });
           }
-          this.props.showNotification(err.message || err || Lang[Config.Lang].Errors.Network.Default, NotificationLevel.err);
+          showNotification(err.message || err || Lang[Config.Lang].Errors.Network.Default, NotificationLevel.err);
         });
     }
     catch (err) {
-      this.props.showNotification(err.message || err || Lang[Config.Lang].Errors.Network.Default, NotificationLevel.err);
+      showNotification(err.message || err || Lang[Config.Lang].Errors.Network.Default, NotificationLevel.err);
     }
   }
 
@@ -106,8 +109,8 @@ class SideMenuComponent extends Component {
 
     return (
       <SideMenuStyles.container>
-          {this.renderMenu()}
-          {this.renderMenuFooter()}
+        {this.renderMenu()}
+        {this.renderMenuFooter()}
       </SideMenuStyles.container>
     );
   }
@@ -175,5 +178,9 @@ const mapStateToProps = state => ({
   user: state.AuthReducer.user
 });
 
-export const SideMenu = connect(mapStateToProps)(SideMenuComponent);
+const mapDispatchToProps = () => ({
+  showNotification: NotificationActions.showNotification
+});
+
+export const SideMenu = connect(mapStateToProps, mapDispatchToProps)(SideMenuComponent);
 export default SideMenu;
