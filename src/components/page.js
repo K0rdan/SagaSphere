@@ -216,7 +216,7 @@ class PageComponent extends Component {
   renderLandscape() {
     const { currentPage, renderContent, navigation } = this.props;
     const { orientation } = this.state;
-    console.log(this.props);
+
     return (
       <View style={{ flex: 1, flexDirection: "row" }}>
         <View style={{ width: 200 }}>{this.renderNavigationView()}</View>
@@ -230,8 +230,9 @@ class PageComponent extends Component {
           {this.props.notificationMessage !== "" &&
           this.props.notificationLevel !== null ? (
             <Notification
-              text={this.state.notificationMessage}
-              level={this.state.notificationLevel}
+              text={this.props.notificationMessage}
+              level={this.props.notificationLevel}
+              style={{ bottom: "15%" }}
             />
           ) : null}
         </View>

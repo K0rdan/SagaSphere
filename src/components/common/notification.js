@@ -42,17 +42,20 @@ export class Notification extends Component {
   }
 
   render() {
-    const { text, level } = this.props;
+    const { text, level, style } = this.props;
 
     if (text && text !== "") {
       return (
-        <View style={[styles.container, this.state.containerOnLayoutStyle]} onLayout={(e) => {
-          this.setState({
-            containerOnLayoutStyle: {
-              marginLeft: -(e.nativeEvent.layout.width / 2)
-            }
-          });
-        }}>
+        <View
+          style={[styles.container, style, this.state.containerOnLayoutStyle]}
+          onLayout={(e) => {
+            this.setState({
+              containerOnLayoutStyle: {
+                marginLeft: -(e.nativeEvent.layout.width / 2)
+              }
+            });
+          }}
+        >
           <Icon name="error" style={styles.icon} color={level} size={30} />
           <View style={{ flex: 1, flexDirection: "row" }}>
             <Text style={[styles.text, { color: level }]}>{text}</Text>
@@ -67,12 +70,14 @@ export class Notification extends Component {
 
 Notification.defaultProps = {
   text: "",
-  level: null
+  level: null,
+  style: {}
 };
 
 Notification.propTypes = {
   text: PropTypes.string.isRequired,
-  level: PropTypes.oneOf(values(NotificationLevel)).isRequired
+  level: PropTypes.oneOf(values(NotificationLevel)).isRequired,
+  style: PropTypes.object
 };
 
 export default Notification;
