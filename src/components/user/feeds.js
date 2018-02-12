@@ -7,7 +7,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { findIndex, map } from "lodash";
 import moment from "moment";
 // Project immports
-import { NotificationActions } from "./../../redux/actions/";
+import { NotificationActions, AuthActions } from "./../../redux/actions/";
 import { NotificationLevel } from "./../../redux/constants/";
 import { Loader } from "./../common/";
 import { API, Config, Lang } from "./../../utils/";
@@ -88,10 +88,15 @@ class FeedsComponent extends Component {
   }
 
   fetchFeeds() {
-    const { showNotification } = this.props;
+    const { logout, showNotification } = this.props;
     return API(Config.EndPoints.user.feeds)
       .then(this.formatFeeds)
-      .catch(err => showNotification(err.message, NotificationLevel.err));
+      .catch((err) => {
+        if (err.status && err.status === 401) {
+          logout();
+        }
+        showNotification(err.message, NotificationLevel.err);
+      });
   }
 
   formatFeeds({ data }) {
@@ -107,8 +112,7 @@ class FeedsComponent extends Component {
         // If the section is already pushed, we add the feed into its data field
         if (sectionIndex !== -1) {
           feedsMaped[sectionIndex].data.push(Object.assign(feed, { key: i }));
-        }
- else {
+        } else {
           // The section doesn't exist, so we add it and the feed aswell
           feedsMaped.push({
             sectionTitle: firstChar,
@@ -275,8 +279,7 @@ class FeedsComponent extends Component {
           "timeout"
         )
       };
-    }
- else {
+    } else {
       // Clear the timeout when we "end" loading
       clearTimeout(this.imageLoaders[rowDataItem.id].timeoutID);
     }
@@ -296,6 +299,7 @@ FeedsComponent.propTypes = {
 const mapStateToProps = state => ({ state });
 
 const mapDispatchToProps = dispatch => ({
+  logout: () => dispatch(AuthActions.logout()),
   showNotification: (message, level) =>
     dispatch(NotificationActions.showNotification(message, level))
 });

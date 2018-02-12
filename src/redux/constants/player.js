@@ -27,7 +27,7 @@ const initialPlayerState = {
   },
   isLoading: false,
   loading: {
-    state: null,
+    state: "",
     percent: 0
   }
 };

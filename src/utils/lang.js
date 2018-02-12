@@ -6,6 +6,9 @@ export const Lang = {
         401: "Vous n'êtes pas connecté",
         404: "Service non disponible",
         Timeout: "Délais de connexion dépassé"
+      },
+      Login: {
+        NotAuthenticated: "Utilisateur non authentifié"
       }
     },
     Menu: {
@@ -48,6 +51,9 @@ export const Lang = {
         401: "You're not connected",
         404: "Service unavailable",
         Timeout: "Request timeout"
+      },
+      Login: {
+        NotAuthenticated: "User not authenticated"
       }
     },
     Menu: {

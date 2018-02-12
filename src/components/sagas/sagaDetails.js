@@ -248,7 +248,7 @@ class SagaDetailsComponent extends Component {
             })
           }
         >
-          <Text style={styles.episodesTrackNum}>{item.trackNumber}</Text>
+          <Text style={styles.episodesTrackNum}>{item.number}</Text>
           <Text style={styles.episodesTrackTitle}>{item.name}</Text>
           <Text style={styles.episodesTrackDuration}>{`${
             duration.hours() > 0

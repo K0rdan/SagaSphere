@@ -4,6 +4,7 @@ import { unzip } from "react-native-zip-archive";
 import Sound from "react-native-sound";
 import moment from "moment";
 // Custom imports
+import { PlayerConsts } from "./../constants/player";
 import { Date } from "./../../utils/index";
 
 const LOADING_STATE = {
@@ -34,7 +35,9 @@ export const fetchingTrack = (track, loadingState, loadingPercent) => ({
 export const FETCHED_TRACK = "FETCHED_TRACK";
 export const fetchedTrack = track => ({
   type: FETCHED_TRACK,
-  track
+  track: Object.assign({}, PlayerConsts.initialState.track, track, {
+    duration: Date.timeAsHourMinSec(track.duration)
+  })
 });
 
 export const FETCH_ERROR = "FETCH_ERROR";
@@ -61,7 +64,9 @@ export const updateSoundCurrentTime = () => (dispatch, getState) => {
       intervalID
     });
     // Check if the track is ended
-    const soundDuration = moment.duration(sound.getDuration(), "seconds").asMilliseconds();
+    const soundDuration = moment
+      .duration(sound.getDuration(), "seconds")
+      .asMilliseconds();
     if (Math.abs(soundDuration - elapsedTime) < 10) {
       clearInterval(intervalID);
       dispatch({ type: SOUND_ENDED });
@@ -113,7 +118,10 @@ export const loadSound = soundPath => (dispatch) => {
 
     sound.play();
 
-    const intervalID = setInterval(() => dispatch(updateSoundCurrentTime(sound)), 100);
+    const intervalID = setInterval(
+      () => dispatch(updateSoundCurrentTime(sound)),
+      100
+    );
 
     dispatch({
       type: SOUND_LOADED,
@@ -125,9 +133,10 @@ export const loadSound = soundPath => (dispatch) => {
 
 export const FETCH_TRACK = "FETCH_TRACK";
 export const fetchTrack = track => (dispatch) => {
-  const { trackNumber, url, saga } = track;
-  const sagaPath = `${RNFetchBlob.fs.dirs.MusicDir}/${saga.title}/${trackNumber}`;
-  return RNFetchBlob.fs.exists(`${sagaPath}/donjon-de-naheulbeuk01.mp3`)
+  const { number, url, saga } = track;
+  const sagaPath = `${RNFetchBlob.fs.dirs.MusicDir}/${saga.title}/${number}`;
+  return RNFetchBlob.fs
+    .exists(`${sagaPath}/donjon-de-naheulbeuk01.mp3`)
     .then((exists) => {
       if (exists) {
         dispatch(fetchedTrack(track));
@@ -136,7 +145,11 @@ export const fetchTrack = track => (dispatch) => {
 
       return RNFetchBlob.fetch("GET", url)
         .progress({ interval: 100 }, (received, total) => {
-          dispatch(fetchingTrack(track, LOADING_STATE.DOWNLOADING, Math.floor((received / total) * 100)));
+          dispatch(fetchingTrack(
+              track,
+              LOADING_STATE.DOWNLOADING,
+              Math.floor(received / total * 100)
+            ));
         })
         .then((res) => {
           dispatch(fetchingTrack(track, LOADING_STATE.BLOBING, 100));

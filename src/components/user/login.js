@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { AsyncStorage, Text, View, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
+import { NavigationActions } from "react-navigation";
 import PropTypes from "prop-types";
 // Project imports
 import { AuthActions, NotificationActions } from "./../../redux/actions/";
@@ -23,7 +24,6 @@ class LoginComponent extends Component {
     this.title = Lang[Config.Lang].Menu.User.Login;
 
     this.state = {
-      user: null,
       connecting: false
     };
   }
@@ -47,21 +47,18 @@ class LoginComponent extends Component {
         .then(async (jsonObj) => {
           try {
             await AsyncStorage.setItem("user", JSON.stringify(jsonObj.data));
-            this.setState({
-              user: jsonObj,
-              connecting: false
-            });
-            dispatch({ type: AuthActions.LOGGED_IN, user: jsonObj });
-            dispatch({ type: "Navigation/NAVIGATE", routeName: "Home" });
-          }
- catch (err) {
+            this.setState({ connecting: false });
+            dispatch({ type: AuthActions.LOGGED_IN, user: jsonObj.data });
+            dispatch(NavigationActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: "Home" })]
+              }));
+          } catch (err) {
             throw err;
           }
         })
         .catch((err) => {
-          this.setState({
-            connecting: false
-          });
+          this.setState({ connecting: false });
           showNotification(err.message, NotificationLevel.err);
         });
 

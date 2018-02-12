@@ -127,8 +127,7 @@ class HomeComponent extends Component {
     if (orientation === "PORTRAIT") {
       // Do something on rotation to PORTRAIT
       this.setState({ orientation });
-    }
- else if (orientation === "LANDSCAPE") {
+    } else if (orientation === "LANDSCAPE") {
       // Do something on rotation to LANDSCAPE
       this.setState({ orientation });
     }
@@ -149,8 +148,7 @@ class HomeComponent extends Component {
       // Force PORTRAIT mode when inactive / background
       Orientation.lockToPortrait();
       this.setState({ orientation: "PORTRAIT" });
-    }
- else if (
+    } else if (
       this.state &&
       this.state.appState &&
       appState &&
@@ -335,8 +333,7 @@ class HomeComponent extends Component {
             right: true
           }
         });
-      }
- else if (
+      } else if (
         currentIndex >= 0 &&
         currentIndex < this.state[carousel].length - 1
       ) {
@@ -347,8 +344,7 @@ class HomeComponent extends Component {
             right: true
           }
         });
-      }
- else {
+      } else {
         // Last item case -> Show left arrow
         this.setState({
           [`${carousel}Arrows`]: {
@@ -363,8 +359,7 @@ class HomeComponent extends Component {
   onArrowPush(carousel, direction) {
     if (direction === "right") {
       this.carousels[carousel].snapToNext();
-    }
- else if (direction === "left") {
+    } else if (direction === "left") {
       this.carousels[carousel].snapToPrev();
     }
   }

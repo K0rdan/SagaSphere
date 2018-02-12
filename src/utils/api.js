@@ -18,8 +18,7 @@ export function API(url, options = {}) {
 
           if (res.statusText) {
             err.message = res.statusText;
-          }
-          else if (statusErr) {
+          } else if (statusErr) {
             err.message = Lang[Config.Lang].Errors.Network[res.status];
           }
 
@@ -38,7 +37,11 @@ export function API(url, options = {}) {
       .catch((err) => {
         throw err;
       }),
-    new Promise((resolve, reject) => setTimeout(() => reject(new Error(Lang[Config.Lang].Errors.Network.Timeout)), Config.Network.timeout))
+    new Promise((resolve, reject) =>
+      setTimeout(
+        () => reject(new Error(Lang[Config.Lang].Errors.Network.Timeout)),
+        Config.Network.timeout
+      ))
   ]);
 }
 

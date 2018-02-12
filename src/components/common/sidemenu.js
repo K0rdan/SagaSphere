@@ -15,21 +15,27 @@ class SideMenuComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.menus = [{
-      title: Lang[Config.Lang].Menu.SagaList,
-      routeName: "SagaList"
-    }, {
-      title: Lang[Config.Lang].Menu.News,
-      routeName: "News"
-    }, {
-      title: Lang[Config.Lang].Menu.User.Feeds,
-      routeName: "Feeds"
-    }];
+    this.menus = [
+      {
+        title: Lang[Config.Lang].Menu.SagaList,
+        routeName: "SagaList"
+      },
+      {
+        title: Lang[Config.Lang].Menu.News,
+        routeName: "News"
+      },
+      {
+        title: Lang[Config.Lang].Menu.User.Feeds,
+        routeName: "Feeds"
+      }
+    ];
 
     this.state = {
       connecting: false,
       disconnecting: false,
-      dataSource: new ListView.DataSource({ rowHasChanged: (a, b) => a !== b }).cloneWithRows(this.menus)
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (a, b) => a !== b
+      }).cloneWithRows(this.menus)
     };
   }
 
@@ -80,11 +86,16 @@ class SideMenuComponent extends Component {
               navigation.navigate("Login");
             });
           }
-          showNotification(err.message || err || Lang[Config.Lang].Errors.Network.Default, NotificationLevel.err);
+          showNotification(
+            err.message || err || Lang[Config.Lang].Errors.Network.Default,
+            NotificationLevel.err
+          );
         });
-    }
-    catch (err) {
-      showNotification(err.message || err || Lang[Config.Lang].Errors.Network.Default, NotificationLevel.err);
+    } catch (err) {
+      showNotification(
+        err.message || err || Lang[Config.Lang].Errors.Network.Default,
+        NotificationLevel.err
+      );
     }
   }
 
@@ -116,9 +127,8 @@ class SideMenuComponent extends Component {
   }
 
   renderMenuFooter() {
-    return (
-      <View></View>
-    );
+    this.a = 0;
+    return <View />;
   }
 
   renderMenu() {
@@ -136,7 +146,10 @@ class SideMenuComponent extends Component {
         <ListView
           dataSource={this.state.dataSource}
           renderRow={rowData => this.renderMenuRow(rowData)}
-          renderSeparator={(sectionId, rowId) => this.renderMenuSeparator(sectionId, rowId)} />
+          renderSeparator={(sectionId, rowId) =>
+            this.renderMenuSeparator(sectionId, rowId)
+          }
+        />
         <SideMenuStyles.menuLogout onPress={this.menuLogoutOnPress.bind(this)}>
           <Text>Sign out</Text>
         </SideMenuStyles.menuLogout>
@@ -147,7 +160,9 @@ class SideMenuComponent extends Component {
   renderMenuRow(data) {
     return (
       <SideMenuStyles.menuRowContainer>
-        <SideMenuStyles.menuRowButton onPress={this.menuRowOnPress.bind(this, data)}>
+        <SideMenuStyles.menuRowButton
+          onPress={this.menuRowOnPress.bind(this, data)}
+        >
           <Text>{data.title}</Text>
         </SideMenuStyles.menuRowButton>
       </SideMenuStyles.menuRowContainer>
@@ -158,7 +173,7 @@ class SideMenuComponent extends Component {
     // TMP
     this.a = 0;
     //
-    return (<SideMenuStyles.menuRowSeparator key={rowId} />);
+    return <SideMenuStyles.menuRowSeparator key={rowId} />;
   }
 }
 
@@ -167,7 +182,7 @@ SideMenuComponent.defaultProps = {
 };
 
 SideMenuComponent.propTypes = {
-  currentPageTitle: PropTypes.string.isRequired,
+  currentPageTitle: PropTypes.string,
   navigation: PropTypes.object.isRequired,
   showNotification: PropTypes.func.isRequired,
   user: PropTypes.object

@@ -65,7 +65,6 @@ class PageComponent extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("Page, componentWillReceiveProps, nextProps :", nextProps);
     const { notificationMessage, notificationLevel } = nextProps;
 
     if (notificationMessage && notificationLevel) {
@@ -103,8 +102,7 @@ class PageComponent extends Component {
       // Force PORTRAIT mode when inactive / background
       Orientation.lockToPortrait();
       this.setState({ orientation: "PORTRAIT" });
-    }
- else if (
+    } else if (
       this.state &&
       this.state.appState &&
       appState &&
@@ -123,8 +121,7 @@ class PageComponent extends Component {
     if (orientation === "PORTRAIT") {
       // Do something on rotation to PORTRAIT
       this.setState({ orientation });
-    }
- else if (orientation === "LANDSCAPE") {
+    } else if (orientation === "LANDSCAPE") {
       // Do something on rotation to LANDSCAPE
       this.setState({ orientation });
     }
@@ -165,8 +162,7 @@ class PageComponent extends Component {
       this.state.orientation === "PORTRAIT"
     ) {
       return this.renderPortrait();
-    }
- else if (
+    } else if (
       this.state &&
       this.state.orientation &&
       this.state.orientation === "LANDSCAPE"

@@ -1,4 +1,7 @@
+// Lib imports
 import { AsyncStorage } from "react-native";
+// Custom imports
+import { Config, Lang } from "./../../utils/";
 
 export const LOGGING_IN = "LOGGING_IN";
 export const loggingIn = () => ({
@@ -17,6 +20,13 @@ export const loggingOut = () => ({
   user: null
 });
 
+export const LOGOUT_ERROR = "LOGOUT_ERROR";
+export const logoutError = error => ({
+  type: LOGOUT_ERROR,
+  error,
+  user: null
+});
+
 export const LOGGING_ERROR = "LOGGING_ERROR";
 export const loggingError = error => ({
   type: LOGGING_ERROR,
@@ -24,23 +34,39 @@ export const loggingError = error => ({
   user: null
 });
 
-export const retrieveUser = () => (dispatch) => {
+export const retrieveUser = () => async (dispatch) => {
   dispatch(loggingIn());
-  return AsyncStorage.getItem("user")
-    .then((user) => {
-      if (user !== null) {
-        dispatch({
-          type: LOGGED_IN,
-          user: JSON.parse(user)
-        });
-      }
-    })
-    .catch((error) => {
-      dispatch({
+  try {
+    const user = await AsyncStorage.getItem("user");
+    if (user === null) {
+      return dispatch({
         type: LOGGING_ERROR,
-        error
+        error: Lang[Config.Lang].Errors.Login.NotAuthenticated
       });
+    }
+    return dispatch({ type: LOGGED_IN, user: JSON.parse(user) });
+  } catch (error) {
+    return dispatch({
+      type: LOGGING_ERROR,
+      error: Lang[Config.Lang].Errors.Login.NotAuthenticated
     });
+  }
+};
+
+export const logout = () => async (dispatch) => {
+  try {
+    dispatch(loggingOut());
+    await AsyncStorage.removeItem("user");
+    return dispatch({
+      type: "LOGOUT",
+      user: null
+    });
+  } catch (error) {
+    return dispatch({
+      type: LOGOUT_ERROR,
+      error: Lang[Config.Lang].Errors.Login.NotAuthenticated
+    });
+  }
 };
 
 export const AuthActions = {
@@ -48,7 +74,8 @@ export const AuthActions = {
   LOGGING_OUT,
   LOGGED_IN,
   LOGGING_ERROR,
-  retrieveUser
+  retrieveUser,
+  logout
 };
 
 export default AuthActions;

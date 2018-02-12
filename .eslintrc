@@ -5,10 +5,7 @@
     "node": true,
     "jest": true
   },
-  "plugins": [
-    "async-await",
-    "react"
-  ],
+  "plugins": ["async-await", "react"],
   "parserOptions": {
     "ecmaVersion": 2017,
     "sourceType": "module",
@@ -17,7 +14,7 @@
     }
   },
   "rules": {
-    "brace-style": ["error", "stroustrup"],
+    "brace-style": ["error", "1tbs"],
     "comma-dangle": ["error", "never"],
     "indent": "off",
     "max-len": "off",
@@ -26,6 +23,8 @@
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
     "spaced-comment": "off",
-    "object-curly-newline": "off"
+    "object-curly-newline": "off",
+    "no-extra-parens": "off",
+    "no-mixed-operators": "off"
   }
 }
