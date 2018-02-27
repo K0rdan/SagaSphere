@@ -1,9 +1,13 @@
+// Lib imports
 import React, { Component } from "react";
 import { Text, Slider, View, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import PropTypes from "prop-types";
 import moment from "moment";
+import { isEqual } from "lodash";
+
+// Custom imports
 import { Page } from "./page";
 import { Error, Loader } from "./common";
 import { Date, Config, Lang } from "./../utils";
@@ -52,11 +56,18 @@ class PlayerComponent extends Component {
 
   // To review
   componentDidMount() {
-    const { init, fetchTrack, navigation: { state, dispatch } } = this.props;
-    const { playlist } = state.params;
+    const {
+      playlist,
+      init,
+      fetchTrack,
+      navigation: { state, dispatch }
+    } = this.props;
+    const { playlist: newPlaylist } = state.params;
 
-    dispatch(init(playlist));
-    dispatch(fetchTrack(playlist[0]));
+    if (!isEqual(playlist, newPlaylist)) {
+      dispatch(init(newPlaylist));
+      dispatch(fetchTrack(newPlaylist[0]));
+    }
   }
 
   componentWillReceiveProps(nextProps) {
