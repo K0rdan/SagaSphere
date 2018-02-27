@@ -1,4 +1,4 @@
-import fetch from "isomorphic-fetch";
+import fetch from "cross-fetch";
 import { extend } from "lodash";
 import { Config, Lang } from "./index";
 

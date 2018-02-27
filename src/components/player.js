@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { Page } from "./page";
 import { Error, Loader } from "./common";
-import { Date } from "./../utils";
+import { Date, Config, Lang } from "./../utils";
 import { PlayerActions } from "./../redux/actions/player";
 
 const styles = {
@@ -131,6 +131,7 @@ class PlayerComponent extends Component {
     return (
       <Page
         navigation={this.props.navigation}
+        currentPage={Lang[Config.Lang].Menu.Player}
         renderContent={
           this.state.error === null
             ? this.renderContent.bind(this)

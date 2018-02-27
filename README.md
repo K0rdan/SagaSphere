@@ -1,27 +1,33 @@
 # TODO :
+
 Resolve Yarn install alerts :
+
 ```
 warning "ajv-keywords@1.5.1" has incorrect peer dependency "ajv@>=4.10.0".
 warning "eslint-config-airbnb@15.1.0" has incorrect peer dependency "eslint-plugin-jsx-a11y@^5.1.1".
 ```
 
 ## Installation
+
 ```
 yarn install
 react-native link
 ```
 
 ## Run
+
 If there is not android folder, regenerate the full react-native boiler plate, with the command :
 
-> ```react-native upgrade```
+> `react-native upgrade`
 
 To run the APK generation and deployment on the device run :
 
-> ```react-native run-android```
+> `react-native run-android`
 
 ## Plugins
-List of installed plugins (or to __install__):
+
+List of installed plugins (or to **install**):
+
 * [react-native-device-info](https://github.com/rebeccahughes/react-native-device-info)
 * [react-native-orientation](https://github.com/yamill/react-native-orientation)
 * [react-native-snap-carousel](https://github.com/archriss/react-native-snap-carousel/)
@@ -29,18 +35,36 @@ List of installed plugins (or to __install__):
 * [react-native-fetch-blob](https://github.com/wkh237/react-native-fetch-blob)
 * [react-native-zip-archive](https://github.com/mockingbot/react-native-zip-archive)
 * [react-native-sound](https://github.com/zmxv/react-native-sound/wiki/Installation)
+* [react-native-circular-progress](https://github.com/bgryszko/react-native-circular-progress)
+
+### Notes :
+
+* In the **React-Native-Circular-Progress** plugin, i'd to change the following file, to allow transparent background.
+  > `.../react-native-circular-progress/src/CircularProgress.js` line 35
+  >
+  > ````
+  > {backgroundColor !== "transparent" && (
+  >    <Shape
+  >      d={backgroundPath}
+  >      stroke={backgroundColor}
+  >      strokeWidth={backgroundWidth != null ? backgroundWidth : width}
+  >    />
+  >  )}```
+  > ````
 
 ## Specifications
+
 ### Saga specifications
-| Title | Type (MySQL Type) | Size |
-|---|---|---|
-| Title | String (VARCHAR) | 50 |
-| Image  | String (VARCHAR) | 200 |
-| Author  | String (VARCHAR) | 50 |
-| Creation | Date (EPOCH) | - |
-| Url | String (VARCHAR) | 200 |
-| Followers | Number (MEDIUMINT)| 2^53-1 |
-| Tracks | Array of Object (List of (table tracks) ID) | - |
+
+| Title     | Type (MySQL Type)                           | Size   |
+| --------- | ------------------------------------------- | ------ |
+| Title     | String (VARCHAR)                            | 50     |
+| Image     | String (VARCHAR)                            | 200    |
+| Author    | String (VARCHAR)                            | 50     |
+| Creation  | Date (EPOCH)                                | -      |
+| Url       | String (VARCHAR)                            | 200    |
+| Followers | Number (MEDIUMINT)                          | 2^53-1 |
+| Tracks    | Array of Object (List of (table tracks) ID) | -      |
 
 ```
 {
@@ -62,6 +86,7 @@ List of installed plugins (or to __install__):
 ```
 
 ### Tracks specifications
+
 ```
 {
   name: "Episode 1",
@@ -71,6 +96,7 @@ List of installed plugins (or to __install__):
 ```
 
 ### Playlist specifications
+
 ```
 
 ```

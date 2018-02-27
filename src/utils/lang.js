@@ -18,7 +18,8 @@ export const Lang = {
       User: {
         Login: "Authentification",
         Feeds: "Mes sagas"
-      }
+      },
+      Player: "Player"
     },
     Units: {
       Day: "jour",
@@ -63,7 +64,8 @@ export const Lang = {
       User: {
         Login: "Sign in",
         Feeds: "My sagas"
-      }
+      },
+      Player: "Player"
     },
     Units: {
       Day: "day",

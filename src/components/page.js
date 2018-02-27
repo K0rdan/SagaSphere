@@ -89,6 +89,9 @@ class PageComponent extends Component {
   componentWillUnmount() {
     AppState.removeEventListener("change", this.appStateDidChange);
     Orientation.removeOrientationListener(this.orientationDidChange);
+    if (this.notificationTimeoutID) {
+      clearTimeout(this.notificationTimeoutID);
+    }
   }
 
   appStateDidChange(appState) {
@@ -132,11 +135,7 @@ class PageComponent extends Component {
   }
 
   showNotification(notificationMessage, notificationLevel) {
-    if (
-      notificationMessage &&
-      notificationMessage !== "" &&
-      notificationLevel
-    ) {
+    if (notificationMessage && notificationLevel) {
       if (this.refs.drawer) {
         this.refs.drawer.closeDrawer();
       }
@@ -144,7 +143,8 @@ class PageComponent extends Component {
       this.setState({ notificationMessage, notificationLevel }, () => {
         LayoutAnimation.configureNext(this.LayoutLinearAnimation);
       });
-      setTimeout(() => {
+
+      this.notificationTimeoutID = setTimeout(() => {
         this.setState(
           { notificationMessage: "", notificationLevel: null },
           () => {

@@ -1,7 +1,13 @@
 // Lib imports
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Text, View, AppState, TouchableOpacity } from "react-native";
+import {
+  BackHandler,
+  Text,
+  View,
+  AppState,
+  TouchableOpacity
+} from "react-native";
 import { connect } from "react-redux";
 import { map } from "lodash";
 import Orientation from "react-native-orientation";
@@ -114,13 +120,20 @@ class HomeComponent extends Component {
   }
 
   componentDidMount() {
+    const { navigation: { dispatch } } = this.props;
+
     AppState.addEventListener("change", this.appStateDidChange);
     Orientation.addOrientationListener(this.orientationDidChange);
+    BackHandler.addEventListener("hardwareBackPress", () => {
+      dispatch({ type: "Navigation/BACK" });
+      return true;
+    });
   }
 
   componentWillUnmount() {
     AppState.removeEventListener("change", this.appStateDidChange);
     Orientation.removeOrientationListener(this.orientationDidChange);
+    BackHandler.removeEventListener("hardwareBackPress");
   }
 
   orientationDidChange(orientation) {

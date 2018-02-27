@@ -10,7 +10,7 @@ export const NavReducer = (state, action) => {
   const { type, routeName, routeParams } = action;
   let newState;
   switch (type) {
-    case "Navigation/NAVIGATE":
+    case NavigationActions.NAVIGATE:
       if (find(routes, route => route.routeName === routeName)) {
         newState = AppNavigator.router.getStateForAction(
           NavigationActions.navigate({ routeName, params: routeParams }),
