@@ -1,17 +1,9 @@
 // Lib imports
-import React from "react";
-import { Provider } from "react-redux";
+import React, { Component } from 'react';
 
 // Custom imports
-import { configureStore } from "./redux/configureStore";
-import AppWithNavigationState from "./nav";
+import AppWithNavigationState from './nav';
 
 // APP
-const store = configureStore();
-export const SagaSphere = () => (
-  <Provider store={store}>
-    <AppWithNavigationState />
-  </Provider>
-);
-
+export const SagaSphere = () => <AppWithNavigationState />;
 export default SagaSphere;
