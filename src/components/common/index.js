@@ -1,21 +1,11 @@
-import { Footer } from "./footer";
-import { Loader } from "./loader";
-import { Notification } from "./notification";
-import { SideMenu } from "./sidemenu";
-import { Error } from "./error";
+import PageComponent from '@components/common/page/index';
+import FooterComponent from '@components/common/footer/index';
 
-export * from "./footer";
-export * from "./loader";
-export * from "./notification";
-export * from "./sidemenu";
-export * from "./error";
+export { PageComponent, FooterComponent };
 
-export const Common = {
-    Footer,
-    Loader,
-    Notification,
-    SideMenu,
-    Error
+export const CommonComponents = {
+  Page: PageComponent,
+  Footer: FooterComponent,
 };
 
-export default Common;
+export default CommonComponents;

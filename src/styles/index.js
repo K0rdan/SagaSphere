@@ -1,15 +1,9 @@
-import { NavbarStyles } from "./navbar";
-import { SidemenuStyles } from "./sidemenu";
-import { SagaListItemStyles } from "./sagaListItem";
+import * as Colors from '@styles/colors';
 
-export * from "./navbar";
-export * from "./sidemenu";
-export * from "./sagaListItem";
+export { Colors };
 
-export const Styles = {
-    NavbarStyles,
-    SidemenuStyles,
-    SagaListItemStyles
+export const styles = {
+  theme: Colors.theme,
 };
 
-export default Styles;
+export default styles;

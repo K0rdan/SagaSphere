@@ -10,24 +10,6 @@ export const AppNavigator = createStackNavigator(
       screen: routes.Home.route,
       navigationOptions: { title: 'TEST' },
     },
-    // Login: {
-    //   screen: routes.Login.route,
-    //   navigationOptions: { title: Lang[Config.Lang].Menu.User.Login },
-    // },
-    // SagaList: {
-    //   screen: routes.SagaList.route,
-    //   navigationOptions: { title: Lang[Config.Lang].Menu.SagaList },
-    // },
-    // SagaDetails: { screen: routes.SagaDetails.route },
-    // Player: { screen: routes.Player.route },
-    // News: {
-    //   screen: routes.News.route,
-    //   navigationOptions: { title: Lang[Config.Lang].Menu.News },
-    // },
-    // Feeds: {
-    //   screen: routes.Feeds.route,
-    //   navigationOptions: { title: Lang[Config.Lang].Menu.User.Feeds },
-    // },
   },
   {
     initialRouteName: 'Home',
