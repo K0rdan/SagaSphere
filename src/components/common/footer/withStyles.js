@@ -6,6 +6,11 @@ const styles = {
     height: 50,
     backgroundColor: Colors.primaryLight,
   },
+  button: {
+    flex: 1,
+  },
+  buttonSize: 48,
+  buttonColor: Colors.secondary,
 };
 
 export const withStyles = Component => props => {
