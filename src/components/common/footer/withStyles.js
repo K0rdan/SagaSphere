@@ -1,16 +1,22 @@
 import React from 'react';
-import { Colors } from '@styles/index';
+import { Colors, Spacing } from '@styles/index';
+
+const button = {
+  size: 40,
+  color: Colors.secondary,
+};
 
 const styles = {
   container: {
-    height: 50,
-    backgroundColor: Colors.primaryLight,
+    flexDirection: 'row',
+    height: Spacing.footer.height,
+    backgroundColor: Colors.primary,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingLeft: Spacing.defaultPadding,
+    paddingRight: Spacing.defaultPadding,
   },
-  button: {
-    flex: 1,
-  },
-  buttonSize: 48,
-  buttonColor: Colors.secondary,
+  button,
 };
 
 export const withStyles = Component => props => {

@@ -4,7 +4,7 @@ import { Colors } from '@styles/index';
 const styles = {
   container: {
     flex: 1,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primaryLight,
   },
   content: {
     flex: 1,
