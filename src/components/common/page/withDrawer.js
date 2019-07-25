@@ -1,19 +1,25 @@
 import React from 'react';
-import { DrawerLayoutAndroid, View, Text } from 'react-native';
+import { Dimensions } from 'react-native';
+import DrawerLayout from 'react-native-gesture-handler/DrawerLayout';
+import { SideMenu } from '@components/common/sidemenu/index';
+import { Spacing } from '@styles/index';
+
+const buttonSize = 40 + 2 * Spacing.defaultPadding;
+const drawerWidth = Dimensions.get('window').width - buttonSize;
 
 export const withDrawer = Component => props => (
-  <DrawerLayoutAndroid
+  <DrawerLayout
     // ref="drawer"
-    drawerWidth={200}
-    drawerPosition={DrawerLayoutAndroid.positions.Left}
-    renderNavigationView={() => (
-      <View>
-        <Text>NavigationView!</Text>
-      </View>
-    )}
+    drawerType={'slide'}
+    drawerWidth={drawerWidth}
+    edgeWidth={20}
+    drawerPosition={DrawerLayout.positions.Left}
+    overlayColor={'rgba(0,0,0,0.5)'}
+    statusBarAnimation={'slide'}
+    renderNavigationView={() => <SideMenu />}
   >
     <Component {...props} />
-  </DrawerLayoutAndroid>
+  </DrawerLayout>
 );
 
 export default withDrawer;

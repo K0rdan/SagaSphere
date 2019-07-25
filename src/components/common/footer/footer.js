@@ -1,22 +1,16 @@
 // Lib imports
 import React from 'react';
 import { compose } from 'react-apollo';
-import { View, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { View } from 'react-native';
 // Project imports
+import FooterButton from '@components/common/footer/footerButton/index';
 import withStyles from '@components/common/footer/withStyles';
-
-const FooterButton = ({ iconName, styles }) => (
-  <TouchableOpacity>
-    <Icon name={iconName} size={styles.size} color={styles.color} />
-  </TouchableOpacity>
-);
 
 export const FooterComponent = ({ styles }) => (
   <View style={styles.container}>
-    <FooterButton iconName="menu" styles={styles.button} />
-    <FooterButton iconName="library-music" styles={styles.button} />
-    <FooterButton iconName="settings" styles={styles.button} />
+    <FooterButton iconName="menu" />
+    <FooterButton iconName="library-music" />
+    <FooterButton iconName="settings" />
   </View>
 );
 

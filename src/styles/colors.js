@@ -1,7 +1,7 @@
 // PRIMARY
 export const primary = '#212121';
 export const primaryLight = '#484848';
-export const primaryDark = '#000000';
+export const primaryDark = '#151515';
 export const primaryText = '#fafafa';
 export const primaryTheme = {
   primary,
