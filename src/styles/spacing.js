@@ -14,4 +14,8 @@ export const defaultPadding = small;
 // FOOTER
 export const footer = {
   height: 50,
+  button: {
+    size: 40,
+    padding: defaultPadding,
+  },
 };

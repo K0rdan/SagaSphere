@@ -7,10 +7,10 @@ import withDrawer from '@components/common/page/withDrawer';
 import withStyles from '@components/common/page/withStyles';
 import FooterComponent from '@components/common/footer/index';
 
-export const PageComponent = ({ children, styles }) => (
+export const PageComponent = ({ children, drawer, styles }) => (
   <View style={styles.container}>
     <View style={styles.content}>{children}</View>
-    <FooterComponent />
+    <FooterComponent openDrawer={() => drawer.current.openDrawer()} />
   </View>
 );
 

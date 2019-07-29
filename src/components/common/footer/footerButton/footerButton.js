@@ -6,8 +6,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 // Project imports
 import withStyles from '@components/common/footer/footerButton/withStyles';
 
-export const FooterButtonComponent = ({ iconName, styles }) => (
-  <TouchableOpacity>
+export const FooterButtonComponent = ({ iconName, onPress, styles }) => (
+  <TouchableOpacity onPress={onPress}>
     <Icon name={iconName} size={styles.size} color={styles.color} />
   </TouchableOpacity>
 );

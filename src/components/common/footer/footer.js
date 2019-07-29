@@ -6,9 +6,9 @@ import { View } from 'react-native';
 import FooterButton from '@components/common/footer/footerButton/index';
 import withStyles from '@components/common/footer/withStyles';
 
-export const FooterComponent = ({ styles }) => (
+export const FooterComponent = ({ openDrawer, styles }) => (
   <View style={styles.container}>
-    <FooterButton iconName="menu" />
+    <FooterButton iconName="menu" onPress={openDrawer} />
     <FooterButton iconName="library-music" />
     <FooterButton iconName="settings" />
   </View>
