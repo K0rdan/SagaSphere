@@ -10,7 +10,7 @@ const buttonSize =
 const drawerWidth = Dimensions.get('window').width - buttonSize;
 
 export const withDrawer = Component =>
-  React.forwardRef((props, ref) => (
+  React.forwardRef(props => (
     <DrawerLayout
       ref={drawerRef}
       drawerType={'slide'}

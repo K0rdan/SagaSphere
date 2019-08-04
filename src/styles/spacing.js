@@ -11,6 +11,13 @@ export const extraLarge = 50;
 
 export const defaultPadding = small;
 
+// SIDEMENU
+export const sidemenu = {
+  section: {
+    height: 50,
+  },
+};
+
 // FOOTER
 export const footer = {
   height: 50,
