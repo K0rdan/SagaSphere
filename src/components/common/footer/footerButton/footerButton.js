@@ -1,6 +1,5 @@
 // Lib imports
 import React from 'react';
-import { compose } from 'react-apollo';
 import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // Project imports
@@ -12,4 +11,4 @@ export const FooterButtonComponent = ({ iconName, onPress, styles }) => (
   </TouchableOpacity>
 );
 
-export default compose(withStyles)(FooterButtonComponent);
+export default withStyles(FooterButtonComponent);

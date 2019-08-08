@@ -1,6 +1,5 @@
 // Lib imports
 import React from 'react';
-import { compose } from 'react-apollo';
 import { View, Text } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -9,7 +8,7 @@ import withStyles from '@components/common/sidemenu/withStyles';
 import { Lang } from '@utils/index';
 
 const SideMenuItem = ({ iconName, label, styles }) => (
-  <View accessible style={{ flexDirection: 'row', alignItems: 'center' }}>
+  <View accessible style={styles.section}>
     <Icon
       name={iconName}
       size={styles.sectionIcon.size}
@@ -26,7 +25,7 @@ export const SideMenuComponent = ({ styles }) => (
         'Greetings',
       )} !`}</Text>
     </View>
-    <View style={styles.section}>
+    <View style={styles.sectionWrapper}>
       <RectButton
         style={{ flex: 1 }}
         onPress={() => {
@@ -42,4 +41,4 @@ export const SideMenuComponent = ({ styles }) => (
   </View>
 );
 
-export default compose(withStyles)(SideMenuComponent);
+export default withStyles(SideMenuComponent);

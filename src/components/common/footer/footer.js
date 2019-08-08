@@ -1,6 +1,5 @@
 // Lib imports
 import React from 'react';
-import { compose } from 'react-apollo';
 import { View } from 'react-native';
 // Project imports
 import FooterButton from '@components/common/footer/footerButton/index';
@@ -14,4 +13,4 @@ export const FooterComponent = ({ openDrawer, styles }) => (
   </View>
 );
 
-export default compose(withStyles)(FooterComponent);
+export default withStyles(FooterComponent);

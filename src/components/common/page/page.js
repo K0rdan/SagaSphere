@@ -1,6 +1,5 @@
 // Lib imports
 import React from 'react';
-import { compose } from 'react-apollo';
 import { View } from 'react-native';
 // Custom imports
 import withDrawer from '@components/common/page/withDrawer';
@@ -14,7 +13,4 @@ export const PageComponent = ({ children, drawer, styles }) => (
   </View>
 );
 
-export default compose(
-  withDrawer,
-  withStyles,
-)(PageComponent);
+export default withDrawer(withStyles(PageComponent));

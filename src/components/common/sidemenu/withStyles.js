@@ -9,13 +9,17 @@ const styles = {
   header: {
     margin: 10,
   },
-  section: {
+  sectionWrapper: {
     height: Spacing.sidemenu.section.height,
     padding: Spacing.defaultSpacing,
     backgroundColor: Colors.primary,
     borderTopWidth: 1,
     borderTopStyle: 'solid',
     borderTopColor: Colors.primaryLight,
+  },
+  section: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   sectionIcon: {
     size: 45,

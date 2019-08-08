@@ -1,8 +1,10 @@
+import * as Env from '@utils/env';
 import * as Lang from '@utils/lang';
 
-export { Lang };
+export { Env, Lang };
 
 export const utils = {
+  Env,
   Lang,
 };
 
