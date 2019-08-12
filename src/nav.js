@@ -8,7 +8,9 @@ export const AppNavigator = createStackNavigator(
   {
     Home: {
       screen: routes.Home.route,
-      navigationOptions: { title: 'TEST' },
+    },
+    Saga: {
+      screen: routes.Saga.route,
     },
   },
   {
