@@ -9,7 +9,7 @@ import { CommonComponents } from '@components/index';
 import { queries as SagaListQueries } from '@gql/SagaList/index';
 import { TrackPlayerOptions } from '@utils/trackPlayer';
 
-const { Page, Loader, Error } = CommonComponents;
+const { Loader, Error } = CommonComponents;
 
 const renderSagaList = ({ navigate }) => {
   const { loading, error, data } = useQuery(SagaListQueries.SAGALIST_QUERY);
@@ -25,7 +25,7 @@ const renderSagaList = ({ navigate }) => {
   if (data) {
     return map(get(data, 'sagas', []), ({ id, name }, index) => (
       <View key={'Home-SagaList-Saga-' + index}>
-        <TouchableHighlight onPress={() => navigate('Saga', { sagaId: id })}>
+        <TouchableHighlight onPress={() => navigate('Saga', { id })}>
           <Text>
             Sagas[{index}] : {name}
           </Text>
@@ -37,8 +37,8 @@ const renderSagaList = ({ navigate }) => {
   return null;
 };
 
-const Home = ({ navigation }) => (
-  <View>
+export const Home = ({ navigation, defaultStyles }) => (
+  <View style={defaultStyles}>
     {renderSagaList(navigation)}
     <TouchableHighlight
       onPress={() => {
@@ -60,10 +60,4 @@ const Home = ({ navigation }) => (
   </View>
 );
 
-export const HomePage = ({ navigation }) => (
-  <Page>
-    <Home navigation={navigation} />
-  </Page>
-);
-
-export default HomePage;
+export default Home;

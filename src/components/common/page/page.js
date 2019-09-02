@@ -8,7 +8,9 @@ import FooterComponent from '@components/common/footer/index';
 
 export const PageComponent = ({ children, drawer, styles }) => (
   <View style={styles.container}>
-    <View style={styles.content}>{children}</View>
+    {React.cloneElement(children, {
+      screenProps: { defaultStyles: styles.content },
+    })}
     <FooterComponent openDrawer={() => drawer.current.openDrawer()} />
   </View>
 );

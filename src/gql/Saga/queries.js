@@ -2,8 +2,9 @@ import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 
 export const SAGA_QUERY = gql`
-  query Saga {
-    saga @client {
+  query Saga($id: ID!) {
+    saga(id: $id) @client {
+      id
       name
       __typename
     }

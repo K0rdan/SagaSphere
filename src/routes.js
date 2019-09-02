@@ -1,12 +1,12 @@
-import { HomePage, SagaPage } from '@pages/index';
+import Pages from '@pages/index';
 
 export default {
   Home: {
-    route: HomePage,
+    route: Pages.Home,
     routeName: 'Home',
   },
   Saga: {
-    route: SagaPage,
+    route: Pages.Saga,
     routeName: 'Saga',
   },
 };

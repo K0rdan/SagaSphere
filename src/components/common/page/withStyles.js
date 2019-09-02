@@ -4,10 +4,11 @@ import { Colors } from '@styles/index';
 const styles = {
   container: {
     flex: 1,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: Colors.primaryLight, // Default color behind AppNavigator
   },
   content: {
     flex: 1,
+    backgroundColor: Colors.primaryLight, // Default content color
   },
 };
 
