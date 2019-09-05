@@ -15,11 +15,11 @@ export const withDrawer = Component =>
       ref={drawerRef}
       drawerType={'slide'}
       drawerWidth={drawerWidth}
-      edgeWidth={20}
+      edgeWidth={100}
       drawerPosition={DrawerLayout.positions.Left}
       overlayColor={'rgba(0,0,0,0.5)'}
       statusBarAnimation={'slide'}
-      renderNavigationView={() => <SideMenu />}
+      renderNavigationView={() => <SideMenu {...props} drawer={drawerRef} />}
     >
       <Component {...props} drawer={drawerRef} />
     </DrawerLayout>

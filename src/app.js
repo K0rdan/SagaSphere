@@ -11,10 +11,10 @@ import {
 // Custom imports
 import { Page } from '@components/common/page/index';
 import AppWithNavigationState from './nav';
-import { getEnv } from '@utils/env';
+import { Env, Services } from '@utils/index';
 import { defaults, resolvers } from '@gql/index';
 
-const { GRAPHQL_HOST, GRAPHQL_PORT } = getEnv();
+const { GRAPHQL_HOST, GRAPHQL_PORT } = Env.getEnv();
 const links = [];
 
 // APOLLO ERROR LINK
@@ -74,7 +74,11 @@ const client = new ApolloClient({
 export const SagaSphere = () => (
   <ApolloProvider client={client}>
     <Page>
-      <AppWithNavigationState />
+      <AppWithNavigationState
+        ref={navigatorRef =>
+          Services.NavigationService.setContainer(navigatorRef)
+        }
+      />
     </Page>
   </ApolloProvider>
 );

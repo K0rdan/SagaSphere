@@ -9,9 +9,21 @@ const labels = {
     EN: 'Welcome',
     FR: 'Bienvenue',
   },
+  Home: {
+    EN: 'News',
+    FR: 'Nouvelles',
+  },
+  Library: {
+    EN: 'Library',
+    FR: 'Bibliothèque',
+  },
   Statistics: {
     EN: 'Statistics',
     FR: 'Statistiques',
+  },
+  Settings: {
+    EN: 'Settings',
+    FR: 'Paramètres',
   },
 };
 const getLabelsFromLang = lang =>

@@ -7,11 +7,12 @@ const styles = {
     backgroundColor: Colors.primaryDark,
   },
   header: {
-    margin: 10,
+    marginTop: 10,
+    marginBottom: 10,
   },
   sectionWrapper: {
-    height: Spacing.sidemenu.section.height,
-    padding: Spacing.defaultSpacing,
+    flex: 1,
+    justifyContent: 'flex-end',
     backgroundColor: Colors.primary,
     borderTopWidth: 1,
     borderTopStyle: 'solid',
@@ -20,12 +21,35 @@ const styles = {
   section: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: '100%',
+    height: Spacing.sidemenu.section.height,
+  },
+  sectionFirst: {
+    borderTopWidth: 1,
+    borderTopStyle: 'solid',
+    borderTopColor: Colors.primaryLight,
+  },
+  sectionActive: {
+    backgroundColor: Colors.primaryDark,
+  },
+  sectionActiveSpan: {
+    width: Spacing.tiny,
+    height: '100%',
+    marginRight: Spacing.small,
+    backgroundColor: Colors.secondary,
+  },
+  sectionRipple: {
+    color: Colors.primaryDark,
   },
   sectionIcon: {
-    size: 45,
+    size: 40,
     color: Colors.primaryLight,
   },
-  text: {
+  sectionIconActive: {
+    color: Colors.secondary,
+  },
+  sectionText: {
+    marginLeft: Spacing.large,
     color: Colors.primaryText,
   },
 };
