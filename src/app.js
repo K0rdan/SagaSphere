@@ -9,7 +9,6 @@ import {
   Observable,
 } from 'apollo-boost';
 // Custom imports
-import { Page } from '@components/common/page/index';
 import AppWithNavigationState from './nav';
 import { Env, Services } from '@utils/index';
 import { defaults, resolvers } from '@gql/index';
@@ -73,13 +72,11 @@ const client = new ApolloClient({
 // APP
 export const SagaSphere = () => (
   <ApolloProvider client={client}>
-    <Page>
-      <AppWithNavigationState
-        ref={navigatorRef =>
-          Services.NavigationService.setContainer(navigatorRef)
-        }
-      />
-    </Page>
+    <AppWithNavigationState
+      ref={navigatorRef =>
+        Services.NavigationService.setContainer(navigatorRef)
+      }
+    />
   </ApolloProvider>
 );
 export default SagaSphere;

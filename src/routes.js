@@ -5,6 +5,10 @@ export default {
     route: Pages.Home,
     routeName: 'Home',
   },
+  Library: {
+    route: Pages.Library,
+    routeName: 'Library',
+  },
   Saga: {
     route: Pages.Saga,
     routeName: 'Saga',

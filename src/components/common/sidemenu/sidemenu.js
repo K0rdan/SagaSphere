@@ -11,7 +11,6 @@ import NavigationService from '@utils/services/navigationService';
 const SideMenuItem = ({ iconName, label, drawer, styles }) => {
   const { routeName = '' } = NavigationService.getCurrentRoute();
   const isActive = routeName === label;
-
   const content = (
     <View
       style={{ ...styles.section, ...(isActive ? styles.sectionActive : {}) }}
@@ -39,7 +38,7 @@ const SideMenuItem = ({ iconName, label, drawer, styles }) => {
       rippleColor={styles.sectionRipple.color}
       onPress={() => {
         NavigationService.navigate(label);
-        drawer.current.closeDrawer();
+        drawer.closeDrawer();
       }}
     >
       {content}
@@ -63,13 +62,13 @@ export const SideMenuComponent = ({ drawer, styles }) => (
           ...styles,
           section: { ...styles.section, ...styles.sectionFirst },
         }}
+        active
       />
       <SideMenuItem
         iconName={'library-music'}
         label={'Library'}
         drawer={drawer}
         styles={styles}
-        active
       />
       <SideMenuItem
         iconName={'insert-chart'}

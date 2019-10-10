@@ -2,44 +2,13 @@
 import React from 'react';
 import { View, Text, TouchableHighlight } from 'react-native';
 import TrackPlayer from 'react-native-track-player';
-import { useQuery } from '@apollo/react-hooks';
-import { map, get } from 'lodash';
 // Custom imports
-import { CommonComponents } from '@components/index';
-import { queries as SagaListQueries } from '@gql/SagaList/index';
 import { TrackPlayerOptions } from '@utils/trackPlayer';
+import withStyles from '@pages/home/withStyles';
 
-const { Loader, Error } = CommonComponents;
-
-const renderSagaList = ({ navigate }) => {
-  const { loading, error, data } = useQuery(SagaListQueries.SAGALIST_QUERY);
-
-  if (loading === true) {
-    return <Loader />;
-  }
-
-  if (error) {
-    return <Error error={error} />;
-  }
-
-  if (data) {
-    return map(get(data, 'sagas', []), ({ id, name }, index) => (
-      <View key={'Home-SagaList-Saga-' + index}>
-        <TouchableHighlight onPress={() => navigate('Saga', { id })}>
-          <Text>
-            Sagas[{index}] : {name}
-          </Text>
-        </TouchableHighlight>
-      </View>
-    ));
-  }
-
-  return null;
-};
-
-export const Home = ({ navigation, defaultStyles }) => (
-  <View style={defaultStyles}>
-    {renderSagaList(navigation)}
+export const Home = ({ styles }) => (
+  <View style={styles.container}>
+    <Text>Home</Text>
     <TouchableHighlight
       onPress={() => {
         TrackPlayer.setupPlayer().then(async () => {
@@ -60,4 +29,4 @@ export const Home = ({ navigation, defaultStyles }) => (
   </View>
 );
 
-export default Home;
+export default withStyles(Home);
